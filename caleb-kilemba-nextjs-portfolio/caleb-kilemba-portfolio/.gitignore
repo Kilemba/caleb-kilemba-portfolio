@@ -1,0 +1,37 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js
+/.next/
+/out/
+
+# production
+/build
+
+# local files
+.DS_Store
+*.pem
+*.log
+
+# environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma generated client
+/src/generated/prisma
+
+# local uploads (development only)
+/public/uploads/*
+!/public/uploads/.gitkeep

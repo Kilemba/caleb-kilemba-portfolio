@@ -1,0 +1,225 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { assertAdmin } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { blogSchema, projectSchema, serviceSchema, siteSettingsSchema, testimonialSchema } from "@/lib/validation";
+import { slugify, splitCsv, toDateOnly } from "@/lib/utils";
+import { BookingStatus, MessageStatus } from "@/generated/prisma/enums";
+
+const checkbox = (formData: FormData, name: string) => formData.get(name) === "on";
+const str = (formData: FormData, name: string) => String(formData.get(name) ?? "").trim();
+const optional = (value: string) => value || null;
+
+async function technologyConnections(names: string[]) {
+  const records = [];
+  for (const name of names) {
+    const record = await prisma.technology.upsert({
+      where: { name },
+      update: {},
+      create: { name, slug: slugify(name) }
+    });
+    records.push({ id: record.id });
+  }
+  return records;
+}
+
+async function tagConnections(names: string[]) {
+  const records = [];
+  for (const name of names) {
+    const record = await prisma.tag.upsert({
+      where: { name },
+      update: {},
+      create: { name, slug: slugify(name) }
+    });
+    records.push({ id: record.id });
+  }
+  return records;
+}
+
+export async function saveProject(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const raw = {
+    title: str(formData, "title"), slug: str(formData, "slug"), category: str(formData, "category"),
+    summary: str(formData, "summary"), businessProblem: str(formData, "businessProblem"), solution: str(formData, "solution"),
+    businessImpact: str(formData, "businessImpact"), impactMetric: str(formData, "impactMetric"), architecture: str(formData, "architecture"),
+    caseStudy: str(formData, "caseStudy"), coverImage: str(formData, "coverImage"), githubUrl: str(formData, "githubUrl"),
+    liveUrl: str(formData, "liveUrl"), sortOrder: str(formData, "sortOrder") || "0", featured: checkbox(formData, "featured"),
+    published: checkbox(formData, "published")
+  };
+  const parsed = projectSchema.safeParse(raw);
+  if (!parsed.success) redirect(`${id ? `/admin/projects/${id}/edit` : "/admin/projects/new"}?error=Please%20check%20the%20project%20fields.`);
+  const technologies = await technologyConnections(splitCsv(formData.get("technologies")));
+  const baseData = {
+    ...parsed.data,
+    impactMetric: optional(parsed.data.impactMetric || ""), coverImage: optional(parsed.data.coverImage || ""),
+    githubUrl: optional(parsed.data.githubUrl || ""), liveUrl: optional(parsed.data.liveUrl || "")
+  };
+  if (id) await prisma.project.update({ where: { id }, data: { ...baseData, technologies: { set: technologies } } });
+  else await prisma.project.create({ data: { ...baseData, technologies: { connect: technologies } } });
+  revalidatePath("/"); revalidatePath("/projects");
+  redirect("/admin/projects?saved=1");
+}
+
+export async function deleteProject(formData: FormData) {
+  await assertAdmin();
+  await prisma.project.delete({ where: { id: str(formData, "id") } });
+  revalidatePath("/"); revalidatePath("/projects");
+}
+
+export async function saveService(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const parsed = serviceSchema.safeParse({
+    title: str(formData, "title"), slug: str(formData, "slug"), description: str(formData, "description"),
+    sortOrder: str(formData, "sortOrder") || "0", published: checkbox(formData, "published")
+  });
+  if (!parsed.success) redirect(`/admin/services?error=Please%20check%20the%20service%20fields.`);
+  const technologies = await technologyConnections(splitCsv(formData.get("technologies")));
+  if (id) await prisma.service.update({ where: { id }, data: { ...parsed.data, technologies: { set: technologies } } });
+  else await prisma.service.create({ data: { ...parsed.data, technologies: { connect: technologies } } });
+  revalidatePath("/"); revalidatePath("/services");
+  redirect("/admin/services?saved=1");
+}
+
+export async function deleteService(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const bookingCount = await prisma.booking.count({ where: { serviceId: id } });
+  if (bookingCount) redirect("/admin/services?error=This%20service%20has%20bookings%20and%20cannot%20be%20deleted.%20Unpublish%20it%20instead.");
+  await prisma.service.delete({ where: { id } });
+  revalidatePath("/"); revalidatePath("/services");
+}
+
+export async function saveBlogPost(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const parsed = blogSchema.safeParse({
+    title: str(formData, "title"), slug: str(formData, "slug"), excerpt: str(formData, "excerpt"),
+    content: String(formData.get("content") ?? ""), coverImage: str(formData, "coverImage"), category: str(formData, "category"),
+    published: checkbox(formData, "published"), featured: checkbox(formData, "featured"),
+    devToUrl: str(formData, "devToUrl"), canonicalUrl: str(formData, "canonicalUrl")
+  });
+  if (!parsed.success) redirect(`${id ? `/admin/blog/${id}/edit` : "/admin/blog/new"}?error=Please%20check%20the%20blog%20fields.`);
+  const tags = await tagConnections(splitCsv(formData.get("tags")));
+  const existing = id ? await prisma.blogPost.findUnique({ where: { id } }) : null;
+  const publishedAt = parsed.data.published ? (existing?.publishedAt ?? new Date()) : null;
+  const baseData = {
+    ...parsed.data,
+    coverImage: optional(parsed.data.coverImage || ""), devToUrl: optional(parsed.data.devToUrl || ""),
+    canonicalUrl: optional(parsed.data.canonicalUrl || ""), publishedAt
+  };
+  if (id) await prisma.blogPost.update({ where: { id }, data: { ...baseData, tags: { set: tags } } });
+  else await prisma.blogPost.create({ data: { ...baseData, tags: { connect: tags } } });
+  revalidatePath("/blog"); revalidatePath("/rss.xml"); revalidatePath("/");
+  redirect("/admin/blog?saved=1");
+}
+
+export async function deleteBlogPost(formData: FormData) {
+  await assertAdmin();
+  await prisma.blogPost.delete({ where: { id: str(formData, "id") } });
+  revalidatePath("/blog"); revalidatePath("/rss.xml");
+}
+
+export async function setBookingStatus(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const status = str(formData, "status") as BookingStatus;
+  if (!Object.values(BookingStatus).includes(status)) throw new Error("Invalid booking status");
+  const booking = await prisma.booking.findUnique({ where: { id } });
+  if (!booking) throw new Error("Booking not found");
+  const slotKey = `${booking.bookingDate.toISOString().slice(0, 10)}:${booking.startTime}`;
+  await prisma.booking.update({
+    where: { id },
+    data: { status, activeSlotKey: status === BookingStatus.PENDING || status === BookingStatus.CONFIRMED ? slotKey : null }
+  });
+  revalidatePath("/admin/bookings");
+}
+
+export async function setMessageStatus(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const status = str(formData, "status") as MessageStatus;
+  if (!Object.values(MessageStatus).includes(status)) throw new Error("Invalid message status");
+  await prisma.contactMessage.update({ where: { id }, data: { status } });
+  revalidatePath("/admin/messages");
+}
+
+export async function saveAvailability(formData: FormData) {
+  await assertAdmin();
+  const dayOfWeek = Number(str(formData, "dayOfWeek"));
+  const startTime = str(formData, "startTime");
+  const endTime = str(formData, "endTime");
+  const slotDuration = Number(str(formData, "slotDuration"));
+  if (!Number.isInteger(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6 || !/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime) || slotDuration < 15) {
+    redirect("/admin/availability?error=Invalid%20availability%20settings.");
+  }
+  await prisma.availability.upsert({
+    where: { dayOfWeek },
+    update: { startTime, endTime, slotDuration, active: checkbox(formData, "active") },
+    create: { dayOfWeek, startTime, endTime, slotDuration, active: checkbox(formData, "active") }
+  });
+  revalidatePath("/book");
+  redirect("/admin/availability?saved=1");
+}
+
+export async function addBlockedDate(formData: FormData) {
+  await assertAdmin();
+  const date = str(formData, "date");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) redirect("/admin/availability?error=Invalid%20date.");
+  await prisma.blockedDate.upsert({
+    where: { date: toDateOnly(date) },
+    update: { reason: optional(str(formData, "reason")) },
+    create: { date: toDateOnly(date), reason: optional(str(formData, "reason")) }
+  });
+  revalidatePath("/book");
+  redirect("/admin/availability?saved=1");
+}
+
+export async function deleteBlockedDate(formData: FormData) {
+  await assertAdmin();
+  await prisma.blockedDate.delete({ where: { id: str(formData, "id") } });
+  revalidatePath("/book");
+}
+
+export async function saveTestimonial(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const parsed = testimonialSchema.safeParse({
+    name: str(formData, "name"), company: str(formData, "company"), role: str(formData, "role"),
+    testimonial: str(formData, "testimonial"), published: checkbox(formData, "published"), sortOrder: str(formData, "sortOrder") || "0"
+  });
+  if (!parsed.success) redirect("/admin/testimonials?error=Please%20check%20the%20testimonial%20fields.");
+  if (id) await prisma.testimonial.update({ where: { id }, data: parsed.data }); else await prisma.testimonial.create({ data: parsed.data });
+  revalidatePath("/");
+  redirect("/admin/testimonials?saved=1");
+}
+
+export async function deleteTestimonial(formData: FormData) {
+  await assertAdmin();
+  await prisma.testimonial.delete({ where: { id: str(formData, "id") } });
+  revalidatePath("/");
+}
+
+export async function saveSettings(formData: FormData) {
+  await assertAdmin();
+  const parsed = siteSettingsSchema.safeParse({
+    name: str(formData, "name"), professionalTitle: str(formData, "professionalTitle"), heroHeading: str(formData, "heroHeading"),
+    homepageIntroduction: str(formData, "homepageIntroduction"), aboutText: str(formData, "aboutText"),
+    linkedinUrl: str(formData, "linkedinUrl"), githubUrl: str(formData, "githubUrl"), email: str(formData, "email"),
+    phone: str(formData, "phone"), location: str(formData, "location"), resumeUrl: str(formData, "resumeUrl"),
+    seoDescription: str(formData, "seoDescription"), bookingIntroduction: str(formData, "bookingIntroduction")
+  });
+  if (!parsed.success) redirect("/admin/settings?error=Please%20check%20the%20settings%20fields%20and%20URLs.");
+  const data = {
+    ...parsed.data,
+    linkedinUrl: optional(parsed.data.linkedinUrl || ""), githubUrl: optional(parsed.data.githubUrl || ""),
+    email: optional(parsed.data.email || ""), phone: optional(parsed.data.phone || ""),
+    location: optional(parsed.data.location || ""), resumeUrl: optional(parsed.data.resumeUrl || "")
+  };
+  await prisma.siteSettings.upsert({ where: { id: "default" }, update: data, create: { id: "default", ...data } });
+  revalidatePath("/", "layout");
+  redirect("/admin/settings?saved=1");
+}
