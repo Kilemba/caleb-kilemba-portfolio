@@ -23,16 +23,18 @@ async function main() {
         "I'm Caleb Kilemba. I help businesses turn fragmented, manual and difficult-to-use data into reliable pipelines, automated reporting systems, analytics platforms and decision-ready information.",
       aboutText:
         "I'm Caleb Kilemba, a Data Engineer focused on designing systems that make organisational data reliable, accessible and useful.\n\nI work across data engineering, analytics engineering, databases, automation and business intelligence.\n\nMy focus is not simply implementing technologies. I build solutions around the business problem that needs to be solved.",
+      linkedinUrl: "https://www.linkedin.com/in/caleb-kilemba/",
       seoDescription:
-        "Caleb Kilemba is a Data Engineer, Analytics Engineer and Consultant building reliable data pipelines, analytics platforms, automation and business intelligence solutions.",
+        "Data engineer and BigQuery consultant. I build reliable data pipelines, cloud data warehouses and automated reporting that turn scattered business data into decisions you can trust.",
       bookingIntroduction:
         "Choose the service closest to your need, select an available consultation slot and describe the data problem you want to solve."
     }
   });
 
   const technologyNames = [
-    "Python", "SQL", "PostgreSQL", "Apache Kafka", "Apache Airflow", "Apache Spark",
-    "Docker", "Power BI", "Git", "Cloud technologies", "APIs", "Data Modelling", "Grafana"
+    "Google BigQuery", "Python", "SQL", "PostgreSQL", "dbt", "Apache Kafka", "Apache Airflow",
+    "Apache Spark", "Google Cloud Platform", "Looker Studio", "Docker", "Power BI", "Git",
+    "Cloud technologies", "APIs", "Data Modelling", "Grafana"
   ];
 
   const technologyMap = new Map<string, string>();
@@ -47,6 +49,16 @@ async function main() {
   }
 
   const services = [
+    {
+      title: "BigQuery for Business",
+      description: "Move your reporting onto Google BigQuery so analysis that used to take hours runs in seconds. I design the warehouse, model the data with dbt and connect it to dashboards your team can actually use — with query costs kept under control.",
+      technologies: ["Google BigQuery", "dbt", "SQL", "Looker Studio", "Google Cloud Platform"]
+    },
+    {
+      title: "Digital Transformation",
+      description: "Replace spreadsheets, manual handoffs and disconnected systems with one dependable data platform. I map how information moves through your business, remove the manual steps and leave you with automated reporting people trust.",
+      technologies: ["Google Cloud Platform", "Python", "Apache Airflow", "Data Modelling"]
+    },
     {
       title: "Data Pipeline Development",
       description: "Design and build reliable ETL and ELT pipelines that move data between APIs, databases, applications and analytics platforms.",
@@ -83,7 +95,8 @@ async function main() {
     const service = services[i];
     await prisma.service.upsert({
       where: { slug: slugify(service.title) },
-      update: {},
+      // Keep ordering authoritative on re-seed without clobbering admin-edited copy.
+      update: { sortOrder: i },
       create: {
         title: service.title,
         slug: slugify(service.title),
