@@ -1,0 +1,12 @@
+# Secrets stay local; production values come from Vercel environment variables.
+# An uploaded .env would otherwise be loaded at runtime and override them.
+.env
+.env.*
+
+# Rebuilt on Vercel
+node_modules
+.next
+src/generated/prisma
+
+# Local-only
+*.log
