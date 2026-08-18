@@ -2,6 +2,7 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { pgConnectionConfig } from "../src/lib/db-config";
 
 const [emailArg, passwordArg] = process.argv.slice(2);
 
@@ -15,7 +16,7 @@ if (passwordArg.length < 12) {
   process.exit(1);
 }
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const adapter = new PrismaPg(pgConnectionConfig());
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

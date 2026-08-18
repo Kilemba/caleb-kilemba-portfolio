@@ -2,8 +2,9 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { pgConnectionConfig } from "../src/lib/db-config";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const adapter = new PrismaPg(pgConnectionConfig());
 const prisma = new PrismaClient({ adapter });
 
 const slugify = (value: string) =>

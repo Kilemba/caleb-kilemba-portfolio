@@ -1,16 +1,17 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSiteSettings } from "@/lib/settings";
+import { safeQuery } from "@/lib/safe-query";
 import { ProjectCard } from "@/components/public/ProjectCard";
 
 export default async function HomePage() {
   const [settings, technologies, services, projects, testimonials, posts] = await Promise.all([
     getSiteSettings(),
-    prisma.technology.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], take: 10 }),
-    prisma.service.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { title: "asc" }], include: { technologies: true }, take: 6 }),
-    prisma.project.findMany({ where: { published: true, featured: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], include: { technologies: true }, take: 3 }),
-    prisma.testimonial.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], take: 6 }),
-    prisma.blogPost.findMany({ where: { published: true }, orderBy: [{ featured: "desc" }, { publishedAt: "desc" }], take: 3 })
+    safeQuery("technologies", () => prisma.technology.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], take: 10 }), []),
+    safeQuery("services", () => prisma.service.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { title: "asc" }], include: { technologies: true }, take: 6 }), []),
+    safeQuery("projects", () => prisma.project.findMany({ where: { published: true, featured: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], include: { technologies: true }, take: 3 }), []),
+    safeQuery("testimonials", () => prisma.testimonial.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], take: 6 }), []),
+    safeQuery("posts", () => prisma.blogPost.findMany({ where: { published: true }, orderBy: [{ featured: "desc" }, { publishedAt: "desc" }], take: 3 }), [])
   ]);
 
   return (
