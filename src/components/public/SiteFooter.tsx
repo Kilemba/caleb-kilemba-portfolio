@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { getSiteSettings } from "@/lib/settings";
+import { getResumeMeta } from "@/lib/resume";
 import { LinkedInIcon } from "@/components/public/LinkedInIcon";
 
 export async function SiteFooter() {
-  const settings = await getSiteSettings();
+  const [settings, resume] = await Promise.all([getSiteSettings(), getResumeMeta()]);
   return (
     <footer className="border-t border-[#e1e7ec] py-12">
       <div className="container-site grid gap-8 md:grid-cols-[1.2fr_1fr_1fr]">
@@ -41,6 +42,9 @@ export async function SiteFooter() {
             <li><Link href="/book" className="text-sm font-semibold text-[#0f766e]">Book a consultation</Link></li>
             <li><Link href="/contact" className="muted text-sm hover:text-[#0f766e]">Contact</Link></li>
             <li><Link href="/#faq" className="muted text-sm hover:text-[#0f766e]">Common questions</Link></li>
+            {resume.available && (
+              <li><a href="/resume" className="muted text-sm hover:text-[#0f766e]">Download resume</a></li>
+            )}
             {settings.email && (
               <li><a href={`mailto:${settings.email}`} className="muted text-sm hover:text-[#0f766e]">{settings.email}</a></li>
             )}

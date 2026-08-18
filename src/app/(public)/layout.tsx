@@ -4,6 +4,13 @@ import { SiteFooter } from "@/components/public/SiteFooter";
 import { getSiteSettings } from "@/lib/settings";
 import { SERVICE_KEYWORDS } from "@/lib/landing-content";
 
+/**
+ * Public pages are cached and served without hitting the database on every request.
+ * Admin edits call revalidatePath for an immediate refresh; this interval is the backstop
+ * that also picks up changes made straight in the database (seeds, manual SQL).
+ */
+export const revalidate = 300;
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";

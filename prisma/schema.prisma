@@ -207,3 +207,15 @@ model SiteSettings {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
+
+/// Single uploaded CV, stored in the database because Vercel's filesystem is read-only
+/// and ephemeral. A PDF is small enough that this avoids depending on an object store.
+model ResumeFile {
+  id          String   @id @default("default")
+  filename    String
+  contentType String
+  size        Int
+  data        Bytes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

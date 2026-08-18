@@ -4,6 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { MarkdownContent } from "@/components/public/MarkdownContent";
 
+/** Prerenders published articles; new slugs render on demand and are then cached. */
+export async function generateStaticParams() {
+  const posts = await prisma.blogPost.findMany({ where: { published: true }, select: { slug: true } });
+  return posts.map(({ slug }) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await prisma.blogPost.findFirst({ where: { slug, published: true } });

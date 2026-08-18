@@ -8,6 +8,25 @@ import { blogSchema, projectSchema, serviceSchema, siteSettingsSchema, testimoni
 import { slugify, splitCsv, toDateOnly } from "@/lib/utils";
 import { BookingStatus, MessageStatus } from "@/generated/prisma/enums";
 
+/**
+ * Listing and detail routes both cache, so an edit has to clear both. Passing the route
+ * pattern with "page" clears every slug under it, which is what a rename or unpublish needs.
+ */
+function revalidateProjects() {
+  revalidatePath("/");
+  revalidatePath("/projects");
+  revalidatePath("/projects/[slug]", "page");
+  revalidatePath("/sitemap.xml");
+}
+
+function revalidateBlog() {
+  revalidatePath("/");
+  revalidatePath("/blog");
+  revalidatePath("/blog/[slug]", "page");
+  revalidatePath("/rss.xml");
+  revalidatePath("/sitemap.xml");
+}
+
 const checkbox = (formData: FormData, name: string) => formData.get(name) === "on";
 const str = (formData: FormData, name: string) => String(formData.get(name) ?? "").trim();
 const optional = (value: string) => value || null;
@@ -59,14 +78,14 @@ export async function saveProject(formData: FormData) {
   };
   if (id) await prisma.project.update({ where: { id }, data: { ...baseData, technologies: { set: technologies } } });
   else await prisma.project.create({ data: { ...baseData, technologies: { connect: technologies } } });
-  revalidatePath("/"); revalidatePath("/projects");
+  revalidateProjects();
   redirect("/admin/projects?saved=1");
 }
 
 export async function deleteProject(formData: FormData) {
   await assertAdmin();
   await prisma.project.delete({ where: { id: str(formData, "id") } });
-  revalidatePath("/"); revalidatePath("/projects");
+  revalidateProjects();
 }
 
 export async function saveService(formData: FormData) {
@@ -113,14 +132,14 @@ export async function saveBlogPost(formData: FormData) {
   };
   if (id) await prisma.blogPost.update({ where: { id }, data: { ...baseData, tags: { set: tags } } });
   else await prisma.blogPost.create({ data: { ...baseData, tags: { connect: tags } } });
-  revalidatePath("/blog"); revalidatePath("/rss.xml"); revalidatePath("/");
+  revalidateBlog();
   redirect("/admin/blog?saved=1");
 }
 
 export async function deleteBlogPost(formData: FormData) {
   await assertAdmin();
   await prisma.blogPost.delete({ where: { id: str(formData, "id") } });
-  revalidatePath("/blog"); revalidatePath("/rss.xml");
+  revalidateBlog();
 }
 
 export async function setBookingStatus(formData: FormData) {
@@ -221,5 +240,57 @@ export async function saveSettings(formData: FormData) {
   };
   await prisma.siteSettings.upsert({ where: { id: "default" }, update: data, create: { id: "default", ...data } });
   revalidatePath("/", "layout");
+  redirect("/admin/settings?saved=1");
+}
+
+const RESUME_MAX_BYTES = 5 * 1024 * 1024;
+const RESUME_TYPES = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+]);
+
+/**
+ * Stores the CV in the database rather than on disk: Vercel's filesystem is read-only and
+ * ephemeral, so an uploaded file would vanish on the next deploy. A single document is
+ * small enough that this avoids taking a dependency on an object store.
+ */
+export async function uploadResume(formData: FormData) {
+  await assertAdmin();
+  const file = formData.get("resume");
+
+  if (!(file instanceof File) || file.size === 0) {
+    redirect("/admin/settings?error=Choose%20a%20resume%20file%20to%20upload.");
+  }
+  if (!RESUME_TYPES.has(file.type)) {
+    redirect("/admin/settings?error=Resume%20must%20be%20a%20PDF%20or%20Word%20document.");
+  }
+  if (file.size > RESUME_MAX_BYTES) {
+    redirect("/admin/settings?error=Resume%20must%20be%205%20MB%20or%20smaller.");
+  }
+
+  const data = Buffer.from(await file.arrayBuffer());
+  const record = {
+    filename: file.name || "resume.pdf",
+    contentType: file.type,
+    size: data.byteLength,
+    data
+  };
+  await prisma.resumeFile.upsert({
+    where: { id: "default" },
+    update: record,
+    create: { id: "default", ...record }
+  });
+
+  revalidatePath("/", "layout");
+  revalidatePath("/resume");
+  redirect("/admin/settings?saved=1");
+}
+
+export async function removeResume() {
+  await assertAdmin();
+  await prisma.resumeFile.deleteMany({ where: { id: "default" } });
+  revalidatePath("/", "layout");
+  revalidatePath("/resume");
   redirect("/admin/settings?saved=1");
 }

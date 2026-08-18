@@ -3,6 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Prerenders the published project pages at build time. Slugs created later still work:
+ * Next renders them on first request and caches the result.
+ */
+export async function generateStaticParams() {
+  const projects = await prisma.project.findMany({ where: { published: true }, select: { slug: true } });
+  return projects.map(({ slug }) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const project = await prisma.project.findFirst({ where: { slug, published: true } });

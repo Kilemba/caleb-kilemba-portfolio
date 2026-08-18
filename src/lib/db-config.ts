@@ -12,11 +12,21 @@ type PgPoolTuning = {
   max: number;
 };
 
+/**
+ * Pool size is deliberately small. The managed database caps total connections (20 on the
+ * current plan), and every serverless instance and every build worker opens its own pool,
+ * so a large `max` exhausts the server rather than making anything faster. Production
+ * builds prerender pages across parallel workers, so they get one connection each.
+ * Override with DATABASE_POOL_MAX when running against a bigger instance or a pooler.
+ */
+const isProductionBuild = process.env.NEXT_PHASE === "phase-production-build";
+const poolMax = Number(process.env.DATABASE_POOL_MAX) || (isProductionBuild ? 1 : 3);
+
 const POOL_TUNING: PgPoolTuning = {
   connectionTimeoutMillis: 10_000,
   idleTimeoutMillis: 30_000,
   keepAlive: true,
-  max: 10
+  max: poolMax
 };
 
 /**

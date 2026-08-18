@@ -5,6 +5,7 @@ import { getSiteSettings } from "@/lib/settings";
 import { safeQuery } from "@/lib/safe-query";
 import { ProjectCard } from "@/components/public/ProjectCard";
 import { StructuredData } from "@/components/public/StructuredData";
+import { ResumeSection } from "@/components/public/ResumeSection";
 import { ServiceIcon } from "@/components/public/ServiceIcon";
 import { LinkedInIcon } from "@/components/public/LinkedInIcon";
 import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS } from "@/lib/landing-content";
@@ -247,6 +248,8 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <ResumeSection />
 
       {/* ---------- FAQ (also emitted as FAQPage structured data) ---------- */}
       <section className="section-space surface" id="faq">
