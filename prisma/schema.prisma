@@ -219,3 +219,34 @@ model ResumeFile {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+/// Career history shown on the About page and editable at /admin/experience.
+model Experience {
+  id         String    @id @default(cuid())
+  role       String
+  company    String
+  location   String?
+  startDate  DateTime
+  /// Null while this is the current role.
+  endDate    DateTime?
+  summary    String?
+  /// One achievement per entry, rendered as bullets.
+  highlights String[]
+  sortOrder  Int       @default(0)
+  published  Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+/// Binary assets uploaded through the admin panel, keyed by purpose (e.g. "profile-photo").
+/// Stored in the database because Vercel's filesystem is read-only and ephemeral, so an
+/// uploaded file would not survive the next deploy.
+model MediaAsset {
+  id          String   @id
+  filename    String
+  contentType String
+  size        Int
+  data        Bytes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

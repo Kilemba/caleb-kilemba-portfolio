@@ -4,6 +4,8 @@ import { getSiteSettings } from "@/lib/settings";
 import { getResumeMeta } from "@/lib/resume";
 import { pageMetadata } from "@/lib/seo";
 import { Testimonials } from "@/components/public/Testimonials";
+import { ExperienceSection } from "@/components/public/ExperienceSection";
+import { getProfilePhotoMeta, profilePhotoUrl } from "@/lib/media";
 
 export const metadata: Metadata = pageMetadata({
   title: "About",
@@ -11,20 +13,17 @@ export const metadata: Metadata = pageMetadata({
   path: "/about"
 });
 
-/**
- * TODO (Caleb): add your photo to public/images/ and point this at it, e.g.
- * "/images/profile.jpg". A portrait crop around 480x560 works best.
- *
- * This is a constant rather than a filesystem check on purpose: on Vercel the public
- * directory is served from the CDN and is not guaranteed to be readable from the
- * rendering function, so probing for the file can report "missing" even when it is live.
- */
-const PROFILE_PHOTO = "/images/profile-placeholder.svg";
+/** Shown until a photo is uploaded in the admin panel. */
 const PLACEHOLDER = "/images/profile-placeholder.svg";
 
 export default async function AboutPage() {
-  const [settings, resume] = await Promise.all([getSiteSettings(), getResumeMeta()]);
-  const usingPlaceholder = PROFILE_PHOTO === PLACEHOLDER;
+  const [settings, resume, photo] = await Promise.all([
+    getSiteSettings(),
+    getResumeMeta(),
+    getProfilePhotoMeta()
+  ]);
+  const usingPlaceholder = !photo.available;
+  const photoSrc = photo.available ? profilePhotoUrl(photo.updatedAt) : PLACEHOLDER;
 
   return (
     <section className="section-space">
@@ -32,7 +31,7 @@ export default async function AboutPage() {
         <div className="grid gap-10 md:grid-cols-[.62fr_1fr] md:items-start">
           <div>
             <img
-              src={PROFILE_PHOTO}
+              src={photoSrc}
               alt={usingPlaceholder ? "Profile photo placeholder" : `${settings.name}, ${settings.professionalTitle}`}
               width={480}
               height={560}
@@ -40,7 +39,7 @@ export default async function AboutPage() {
             />
             {usingPlaceholder && (
               <p className="muted mt-3 text-xs">
-                Placeholder — set <code>PROFILE_PHOTO</code> in this page to your own image.
+                Placeholder — upload a photo in Admin → Site Settings.
               </p>
             )}
           </div>
@@ -67,6 +66,8 @@ export default async function AboutPage() {
             </div>
           </div>
         </div>
+
+        <ExperienceSection />
 
         <Testimonials />
       </div>

@@ -90,3 +90,15 @@ export const siteSettingsSchema = z.object({
   seoDescription: z.string().trim().min(20).max(320),
   bookingIntroduction: z.string().trim().min(20).max(2000)
 });
+
+/** Career history. Dates arrive as "YYYY-MM" from month inputs; endDate empty = current role. */
+export const experienceSchema = z.object({
+  role: z.string().trim().min(2).max(160),
+  company: z.string().trim().min(2).max(160),
+  location: z.string().trim().max(160).optional(),
+  startDate: z.string().regex(/^\d{4}-\d{2}$/, "Use the month picker for the start date."),
+  endDate: z.union([z.literal(""), z.string().regex(/^\d{4}-\d{2}$/)]).optional(),
+  summary: z.string().trim().max(600).optional(),
+  published: z.boolean(),
+  sortOrder: z.coerce.number().int().min(0)
+});

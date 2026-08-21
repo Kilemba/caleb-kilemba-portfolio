@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { assertAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { blogSchema, projectSchema, serviceSchema, siteSettingsSchema, testimonialSchema } from "@/lib/validation";
+import { blogSchema, experienceSchema, projectSchema, serviceSchema, siteSettingsSchema, testimonialSchema } from "@/lib/validation";
 import { slugify, splitCsv, toDateOnly } from "@/lib/utils";
 import { BookingStatus, MessageStatus } from "@/generated/prisma/enums";
 
@@ -292,5 +292,104 @@ export async function removeResume() {
   await prisma.resumeFile.deleteMany({ where: { id: "default" } });
   revalidatePath("/", "layout");
   revalidatePath("/resume");
+  redirect("/admin/settings?saved=1");
+}
+
+
+/** "YYYY-MM" from a month input to the first of that month, in UTC. */
+function monthToDate(value: string) {
+  return new Date(`${value}-01T00:00:00.000Z`);
+}
+
+export async function saveExperience(formData: FormData) {
+  await assertAdmin();
+  const id = str(formData, "id");
+  const parsed = experienceSchema.safeParse({
+    role: str(formData, "role"),
+    company: str(formData, "company"),
+    location: str(formData, "location"),
+    startDate: str(formData, "startDate"),
+    endDate: str(formData, "endDate"),
+    summary: str(formData, "summary"),
+    published: checkbox(formData, "published"),
+    sortOrder: str(formData, "sortOrder") || "0"
+  });
+  if (!parsed.success) {
+    redirect(`/admin/experience?error=${encodeURIComponent(parsed.error.issues[0]?.message || "Please check the fields.")}`);
+  }
+
+  const { startDate, endDate, location, summary, ...rest } = parsed.data;
+  if (endDate && endDate < startDate) {
+    redirect("/admin/experience?error=The%20end%20date%20cannot%20be%20before%20the%20start%20date.");
+  }
+
+  const data = {
+    ...rest,
+    location: optional(location || ""),
+    summary: optional(summary || ""),
+    startDate: monthToDate(startDate),
+    endDate: endDate ? monthToDate(endDate) : null,
+    // One achievement per line; blank lines ignored.
+    highlights: str(formData, "highlights").split("\n").map((line) => line.trim()).filter(Boolean)
+  };
+
+  if (id) await prisma.experience.update({ where: { id }, data });
+  else await prisma.experience.create({ data });
+
+  revalidatePath("/about");
+  revalidatePath("/");
+  redirect("/admin/experience?saved=1");
+}
+
+export async function deleteExperience(formData: FormData) {
+  await assertAdmin();
+  await prisma.experience.delete({ where: { id: str(formData, "id") } });
+  revalidatePath("/about");
+  revalidatePath("/");
+}
+
+const PHOTO_MAX_BYTES = 4 * 1024 * 1024;
+const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+// Keep in step with PROFILE_PHOTO_ID in lib/media.ts. A "use server" module may only
+// export async functions, so the shared constant cannot be re-exported from here.
+const PROFILE_PHOTO_ID = "profile-photo";
+
+/**
+ * Stores the profile photo in the database for the same reason as the CV: Vercel's
+ * filesystem is read-only and ephemeral, so a file written to public/ would be lost on
+ * the next deploy. Served back through /profile-photo.
+ */
+export async function uploadProfilePhoto(formData: FormData) {
+  await assertAdmin();
+  const file = formData.get("photo");
+
+  if (!(file instanceof File) || file.size === 0) {
+    redirect("/admin/settings?error=Choose%20an%20image%20to%20upload.");
+  }
+  if (!PHOTO_TYPES.has(file.type)) {
+    redirect("/admin/settings?error=Photo%20must%20be%20a%20JPG%2C%20PNG%20or%20WebP%20image.");
+  }
+  if (file.size > PHOTO_MAX_BYTES) {
+    redirect("/admin/settings?error=Photo%20must%20be%204%20MB%20or%20smaller.");
+  }
+
+  const data = Buffer.from(await file.arrayBuffer());
+  const record = { filename: file.name || "profile.jpg", contentType: file.type, size: data.byteLength, data };
+  await prisma.mediaAsset.upsert({
+    where: { id: PROFILE_PHOTO_ID },
+    update: record,
+    create: { id: PROFILE_PHOTO_ID, ...record }
+  });
+
+  revalidatePath("/", "layout");
+  revalidatePath("/profile-photo");
+  redirect("/admin/settings?saved=1");
+}
+
+export async function removeProfilePhoto() {
+  await assertAdmin();
+  await prisma.mediaAsset.deleteMany({ where: { id: PROFILE_PHOTO_ID } });
+  revalidatePath("/", "layout");
+  revalidatePath("/profile-photo");
   redirect("/admin/settings?saved=1");
 }

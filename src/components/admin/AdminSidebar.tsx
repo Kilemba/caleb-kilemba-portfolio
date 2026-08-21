@@ -4,7 +4,7 @@ import { logoutAction } from "@/actions/auth";
 const links = [
   ["Dashboard", "/admin"], ["Projects", "/admin/projects"], ["Blog", "/admin/blog"], ["Services", "/admin/services"],
   ["Bookings", "/admin/bookings"], ["Messages", "/admin/messages"], ["Availability", "/admin/availability"],
-  ["Testimonials", "/admin/testimonials"], ["Site Settings", "/admin/settings"]
+  ["Experience", "/admin/experience"], ["Testimonials", "/admin/testimonials"], ["Site Settings", "/admin/settings"]
 ];
 
 export function AdminSidebar() {
