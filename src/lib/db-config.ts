@@ -20,7 +20,13 @@ type PgPoolTuning = {
  * Override with DATABASE_POOL_MAX when running against a bigger instance or a pooler.
  */
 const isProductionBuild = process.env.NEXT_PHASE === "phase-production-build";
-const poolMax = Number(process.env.DATABASE_POOL_MAX) || (isProductionBuild ? 1 : 3);
+// Vercel freezes a function between invocations, so the pool's idle timer never fires and
+// its connections stay open until the server reaps them. With a 20-connection database,
+// a handful of warm instances is enough to exhaust it, so each one gets a single
+// connection. A long-running server can safely hold more.
+const isServerless = Boolean(process.env.VERCEL);
+const poolMax =
+  Number(process.env.DATABASE_POOL_MAX) || (isProductionBuild || isServerless ? 1 : 3);
 
 const POOL_TUNING: PgPoolTuning = {
   connectionTimeoutMillis: 10_000,

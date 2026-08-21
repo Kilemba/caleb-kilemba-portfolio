@@ -5,6 +5,32 @@ import { prisma } from "@/lib/prisma";
 import { bookingSchema, contactSchema } from "@/lib/validation";
 import { businessTimeNow, businessToday, generateTimeSlots, toDateOnly } from "@/lib/utils";
 
+/**
+ * Turns Zod issues into something a visitor can act on. Previously any failure produced
+ * "Please complete all booking fields", which is misleading when every field is filled
+ * but one is too short — the person has no way to tell what to change.
+ */
+const FIELD_LABELS: Record<string, string> = {
+  name: "your name",
+  email: "your email address",
+  company: "your company",
+  serviceId: "a service",
+  projectDescription: "a description of your data problem (at least 20 characters)",
+  subject: "a subject",
+  message: "a message (at least 10 characters)",
+  bookingDate: "a date",
+  startTime: "a time"
+};
+
+function describeIssues(issues: { path: PropertyKey[] }[]): string {
+  const fields = [...new Set(issues.map((i) => String(i.path[0])))]
+    .map((field) => FIELD_LABELS[field] || field)
+    .filter(Boolean);
+  if (fields.length === 0) return "Please check the form and try again.";
+  const list = fields.length === 1 ? fields[0] : `${fields.slice(0, -1).join(", ")} and ${fields.at(-1)}`;
+  return `Please provide ${list}.`;
+}
+
 export async function submitContact(formData: FormData) {
   const parsed = contactSchema.safeParse({
     name: formData.get("name"),
@@ -14,7 +40,7 @@ export async function submitContact(formData: FormData) {
     subject: formData.get("subject"),
     message: formData.get("message")
   });
-  if (!parsed.success) redirect("/contact?error=Please%20check%20the%20form%20and%20try%20again.");
+  if (!parsed.success) redirect(`/contact?error=${encodeURIComponent(describeIssues(parsed.error.issues))}`);
   await prisma.contactMessage.create({ data: parsed.data });
   redirect("/contact?success=1");
 }
@@ -29,7 +55,7 @@ export async function submitBooking(formData: FormData) {
     bookingDate: formData.get("bookingDate"),
     startTime: formData.get("startTime")
   });
-  if (!parsed.success) redirect("/book?error=Please%20complete%20all%20booking%20fields.");
+  if (!parsed.success) redirect(`/book?error=${encodeURIComponent(describeIssues(parsed.error.issues))}`);
 
   const { bookingDate, startTime, serviceId } = parsed.data;
   const today = businessToday();

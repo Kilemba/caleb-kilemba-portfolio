@@ -74,7 +74,7 @@ export function BookingForm({ services, initialServiceId = "" }: { services: Ser
       <div className="grid gap-5 md:grid-cols-2">
         <div>
           <label className="label" htmlFor="name">Name</label>
-          <input className="field" id="name" name="name" required />
+          <input className="field" id="name" name="name" required minLength={2} maxLength={100} />
         </div>
         <div>
           <label className="label" htmlFor="email">Email</label>
@@ -84,12 +84,24 @@ export function BookingForm({ services, initialServiceId = "" }: { services: Ser
 
       <div>
         <label className="label" htmlFor="company">Company</label>
-        <input className="field" id="company" name="company" required />
+        <input className="field" id="company" name="company" required minLength={2} maxLength={150} />
       </div>
 
       <div>
         <label className="label" htmlFor="projectDescription">Describe your business/data problem</label>
-        <textarea className="field min-h-36" id="projectDescription" name="projectDescription" required />
+        <textarea
+          className="field min-h-36"
+          id="projectDescription"
+          name="projectDescription"
+          required
+          minLength={20}
+          maxLength={5000}
+          aria-describedby="projectDescription-hint"
+          placeholder="What data do you have, where does it live, and what decision are you trying to make?"
+        />
+        <p id="projectDescription-hint" className="muted mt-2 text-xs">
+          At least 20 characters — a sentence or two is plenty.
+        </p>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
