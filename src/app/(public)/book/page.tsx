@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 import { getSiteSettings } from "@/lib/settings";
 import { BookingForm } from "@/components/public/BookingForm";
 
-export const metadata: Metadata = { title: "Book My Services", description: "Request a consultation with Caleb Kilemba for data engineering and analytics services." };
+export const metadata: Metadata = pageMetadata({
+  title: "Book My Services",
+  description: "Request a consultation with Caleb Kilemba for data engineering and analytics services.",
+  path: "/book"
+});
 
 export default async function BookPage({ searchParams }: { searchParams: Promise<{ success?: string; error?: string; service?: string }> }) {
   const [settings, services, query] = await Promise.all([getSiteSettings(), safeQuery("services", () => prisma.service.findMany({ where: { published: true }, orderBy: { sortOrder: "asc" }, select: { id: true, title: true } }), []), searchParams]);

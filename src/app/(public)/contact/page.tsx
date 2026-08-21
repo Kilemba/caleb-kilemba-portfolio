@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { submitContact } from "@/actions/public";
 import { getSiteSettings } from "@/lib/settings";
 
-export const metadata: Metadata = { title: "Contact", description: "Contact Caleb Kilemba about data engineering, analytics, automation and consulting work." };
+export const metadata: Metadata = pageMetadata({
+  title: "Contact",
+  description: "Contact Caleb Kilemba about data engineering, analytics, automation and consulting work.",
+  path: "/contact"
+});
 
 export default async function ContactPage({ searchParams }: { searchParams: Promise<{ success?: string; error?: string }> }) {
   const [settings, query] = await Promise.all([getSiteSettings(), searchParams]);

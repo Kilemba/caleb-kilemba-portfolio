@@ -1,25 +1,115 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import { formatDate } from "@/lib/utils";
 import { MarkdownContent } from "@/components/public/MarkdownContent";
+import { getAllPosts, getPostBySlug, readingMinutes } from "@/lib/blog";
+import { getSiteSettings } from "@/lib/settings";
+import { pageMetadata } from "@/lib/seo";
+import { formatDate, siteUrl } from "@/lib/utils";
 
-/** Prerenders published articles; new slugs render on demand and are then cached. */
+/** Prerenders every published post, from files and from the CMS alike. */
 export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({ where: { published: true }, select: { slug: true } });
-  return posts.map(({ slug }) => ({ slug }));
+  return (await getAllPosts()).map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await prisma.blogPost.findFirst({ where: { slug, published: true } });
-  if (!post) return { title: "Article" };
-  return { title: post.title, description: post.excerpt, alternates: { canonical: post.canonicalUrl || undefined }, openGraph: { title: post.title, description: post.excerpt, images: post.coverImage ? [post.coverImage] : undefined } };
+  const post = await getPostBySlug(slug);
+  if (!post) return { title: "Article not found" };
+
+  return pageMetadata({
+    title: post.title,
+    description: post.description,
+    path: `/blog/${post.slug}`,
+    image: post.cover,
+    type: "article",
+    publishedTime: post.date.toISOString(),
+    modifiedTime: post.updatedAt.toISOString(),
+    tags: post.tags
+  });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await prisma.blogPost.findFirst({ where: { slug, published: true }, include: { tags: true } });
+  const [post, settings] = await Promise.all([getPostBySlug(slug), getSiteSettings()]);
   if (!post) notFound();
-  return <article className="section-space"><div className="container-site max-w-4xl"><span className="badge">{post.category}</span><h1 className="h1 mt-5">{post.title}</h1><p className="lead mt-6">{post.excerpt}</p><p className="muted mt-4 text-sm">{post.publishedAt ? formatDate(post.publishedAt) : ""}</p>{post.coverImage && <img src={post.coverImage} alt={`${post.title} article cover`} className="mt-10 w-full rounded-2xl border border-[#e1e7ec]" />}<div className="mt-10"><MarkdownContent content={post.content} /></div><div className="mt-10 flex flex-wrap gap-2">{post.tags.map((tag) => <span key={tag.id} className="badge">{tag.name}</span>)}</div>{post.devToUrl && <p className="muted mt-8 text-sm">Also syndicated to <a className="font-bold text-[#0f766e]" href={post.devToUrl} target="_blank" rel="noreferrer">DEV.to</a>.</p>}</div></article>;
+
+  const url = siteUrl(`/blog/${post.slug}`);
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    url,
+    ...(post.cover && { image: [post.cover.startsWith("http") ? post.cover : siteUrl(post.cover)] }),
+    ...(post.tags.length > 0 && { keywords: post.tags.join(", ") }),
+    author: {
+      "@type": "Person",
+      name: settings.name,
+      url: siteUrl("/about"),
+      ...(settings.linkedinUrl && { sameAs: [settings.linkedinUrl] })
+    },
+    publisher: { "@type": "Person", name: settings.name, url: siteUrl() }
+  };
+
+  return (
+    <article className="section-space">
+      <script
+        type="application/ld+json"
+        // Escaping "<" stops post content from closing the script tag early.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }}
+      />
+
+      <div className="container-site max-w-4xl">
+        <p className="muted text-sm">
+          <Link href="/blog" className="font-bold text-[#0f766e]">← All articles</Link>
+        </p>
+
+        <span className="badge mt-6 inline-flex">{post.category}</span>
+        <h1 className="h1 mt-5">{post.title}</h1>
+        {post.description && <p className="lead mt-6">{post.description}</p>}
+        <p className="muted mt-4 text-sm">
+          <time dateTime={post.date.toISOString()}>{formatDate(post.date)}</time>
+          {" · "}
+          {readingMinutes(post.body)} min read
+        </p>
+
+        {post.cover && (
+          <img
+            src={post.cover}
+            alt={`${post.title} article cover`}
+            className="mt-10 w-full rounded-2xl border border-[#e1e7ec]"
+          />
+        )}
+
+        <div className="mt-10">
+          <MarkdownContent content={post.body} />
+        </div>
+
+        {post.tags.length > 0 && (
+          <ul className="mt-10 flex flex-wrap gap-2">
+            {post.tags.map((tag) => <li key={tag} className="badge">{tag}</li>)}
+          </ul>
+        )}
+
+        {/* Every post ends in the same funnel as the rest of the site. */}
+        <aside className="card mt-14 p-8 sm:p-10">
+          <p className="eyebrow">Work with me</p>
+          <h2 className="h2 mt-4 text-3xl">Facing something similar in your own data?</h2>
+          <p className="lead mt-5">
+            I help businesses build reliable pipelines, BigQuery warehouses and reporting they can
+            trust. Book a free consultation and we will talk through your systems before you commit
+            to anything.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link href="/book" className="btn btn-primary">Book a consultation</Link>
+            <Link href="/services" className="btn btn-secondary">See what I do</Link>
+          </div>
+        </aside>
+      </div>
+    </article>
+  );
 }

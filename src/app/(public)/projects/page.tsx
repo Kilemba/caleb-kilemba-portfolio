@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 import { ProjectCard } from "@/components/public/ProjectCard";
 
-export const metadata: Metadata = { title: "Projects", description: "Data engineering case studies focused on business problems, solutions and business impact." };
+export const metadata: Metadata = pageMetadata({
+  title: "Projects",
+  description: "Data engineering case studies focused on business problems, solutions and business impact.",
+  path: "/projects"
+});
 
 export default async function ProjectsPage() {
   const projects = await safeQuery("projects", () => prisma.project.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], include: { technologies: true } }), []);

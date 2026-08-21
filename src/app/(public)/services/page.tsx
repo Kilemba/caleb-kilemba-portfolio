@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 
-export const metadata: Metadata = { title: "Services", description: "Data engineering, automation, warehousing, analytics and consulting services by Caleb Kilemba." };
+export const metadata: Metadata = pageMetadata({
+  title: "Services",
+  description: "Data engineering, automation, warehousing, analytics and consulting services by Caleb Kilemba.",
+  path: "/services"
+});
 
 export default async function ServicesPage() {
   const services = await safeQuery("services", () => prisma.service.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { title: "asc" }], include: { technologies: true } }), []);

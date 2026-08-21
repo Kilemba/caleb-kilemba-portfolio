@@ -9,13 +9,16 @@ import { ResumeSection } from "@/components/public/ResumeSection";
 import { ServiceIcon } from "@/components/public/ServiceIcon";
 import { LinkedInIcon } from "@/components/public/LinkedInIcon";
 import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS } from "@/lib/landing-content";
+import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Data Engineer & BigQuery Consultant",
-  description:
-    "Data engineer and BigQuery consultant. I build reliable data pipelines, cloud data warehouses and automated reporting that turn scattered business data into decisions you can trust.",
-  keywords: SERVICE_KEYWORDS,
-  alternates: { canonical: "/" }
+  ...pageMetadata({
+    title: "Data Engineer & BigQuery Consultant",
+    description:
+      "Data engineer and BigQuery consultant. I build reliable data pipelines, cloud data warehouses and automated reporting that turn scattered business data into decisions you can trust.",
+    path: "/"
+  }),
+  keywords: SERVICE_KEYWORDS
 };
 
 /** Highlights the closing words of the hero heading without hard-coding the copy. */
