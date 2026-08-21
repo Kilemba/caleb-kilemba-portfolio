@@ -47,3 +47,33 @@ export function siteUrl(path = "") {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/** Consultations are scheduled in Caleb's working timezone, not the visitor's. */
+export const BUSINESS_TIMEZONE = "Africa/Nairobi";
+
+function businessParts() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: BUSINESS_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).formatToParts(new Date());
+  return Object.fromEntries(parts.map((p) => [p.type, p.value])) as Record<string, string>;
+}
+
+/** Today's date in the business timezone, as YYYY-MM-DD. */
+export function businessToday() {
+  const p = businessParts();
+  return `${p.year}-${p.month}-${p.day}`;
+}
+
+/** Current time in the business timezone, as HH:MM. */
+export function businessTimeNow() {
+  const p = businessParts();
+  // Intl can render midnight as "24" in some environments.
+  const hour = p.hour === "24" ? "00" : p.hour;
+  return `${hour}:${p.minute}`;
+}

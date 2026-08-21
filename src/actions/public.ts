@@ -3,18 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { bookingSchema, contactSchema } from "@/lib/validation";
-import { generateTimeSlots, toDateOnly } from "@/lib/utils";
-
-function todayInNairobi() {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Africa/Nairobi",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(new Date());
-  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
-  return `${map.year}-${map.month}-${map.day}`;
-}
+import { businessTimeNow, businessToday, generateTimeSlots, toDateOnly } from "@/lib/utils";
 
 export async function submitContact(formData: FormData) {
   const parsed = contactSchema.safeParse({
@@ -43,7 +32,8 @@ export async function submitBooking(formData: FormData) {
   if (!parsed.success) redirect("/book?error=Please%20complete%20all%20booking%20fields.");
 
   const { bookingDate, startTime, serviceId } = parsed.data;
-  if (bookingDate < todayInNairobi()) redirect("/book?error=Please%20choose%20a%20future%20date.");
+  const today = businessToday();
+  if (bookingDate < today) redirect("/book?error=Please%20choose%20a%20date%20in%20the%20future.");
 
   const date = toDateOnly(bookingDate);
   const dayOfWeek = date.getUTCDay();
@@ -53,11 +43,17 @@ export async function submitBooking(formData: FormData) {
     prisma.blockedDate.findUnique({ where: { date } })
   ]);
 
-  if (!service || !availability?.active || blocked) {
-    redirect("/book?error=That%20date%20is%20not%20available.");
+  if (!service) redirect("/book?error=Please%20choose%20a%20service.");
+  if (!availability?.active) {
+    redirect("/book?error=Consultations%20run%20Monday%20to%20Friday.%20Please%20choose%20a%20weekday.");
   }
+  if (blocked) redirect("/book?error=That%20date%20is%20not%20available.%20Please%20choose%20another%20day.");
   const slots = generateTimeSlots(availability.startTime, availability.endTime, availability.slotDuration);
   if (!slots.includes(startTime)) redirect("/book?error=That%20time%20is%20not%20available.");
+  // The form hides past slots, but a direct POST could still ask for one.
+  if (bookingDate === today && startTime <= businessTimeNow()) {
+    redirect("/book?error=That%20time%20has%20already%20passed.%20Please%20choose%20a%20later%20slot.");
+  }
 
   const activeSlotKey = `${bookingDate}:${startTime}`;
   try {
