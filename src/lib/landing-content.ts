@@ -107,10 +107,17 @@ export const SERVICE_KEYWORDS = [
   "ETL developer",
   "cloud data warehouse",
   "analytics engineering",
+  "analytics consultant",
   "business intelligence consultant",
+  "BI dashboard development",
+  "semantic layer",
+  "KPI reporting",
   "data automation",
   "dbt",
+  "dbt consultant",
+  "Looker",
   "Looker Studio",
+  "Tableau",
   "Power BI",
   "freelance data engineer"
 ];
