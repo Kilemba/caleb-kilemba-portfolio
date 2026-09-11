@@ -32,9 +32,11 @@ async function main() {
   });
 
   const technologyNames = [
-    "Google BigQuery", "Python", "SQL", "PostgreSQL", "dbt", "Apache Kafka", "Apache Airflow",
-    "Apache Spark", "Google Cloud Platform", "Looker", "Looker Studio", "Tableau", "Docker", "Power BI", "Git",
-    "Cloud technologies", "APIs", "Data Modelling", "Grafana"
+    "Google BigQuery", "Snowflake", "Python", "SQL", "PostgreSQL", "MySQL", "dbt",
+    "Apache Kafka", "Apache Airflow", "Apache Spark", "Google Cloud Platform",
+    "Looker", "Looker Studio", "Tableau", "Power BI", "Grafana",
+    "Docker", "Kubernetes", "Terraform", "FastAPI", "Git",
+    "Cloud technologies", "APIs", "Data Modelling"
   ];
 
   const technologyMap = new Map<string, string>();

@@ -127,3 +127,10 @@ button, input, textarea, select { font: inherit; }
 @media (max-width: 767px) {
   .stat-tile + .stat-tile { border-left: 0; border-top: 1px solid var(--border); }
 }
+
+/* Neutral plate behind a brand mark so multi-coloured logos sit on a consistent ground. */
+.tech-tile { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem;
+  border-radius: .6rem; background: #ffffff; border: 1px solid var(--border); flex-shrink: 0; }
+.tech-chip { display: inline-flex; align-items: center; gap: .55rem; border-radius: 999px; border: 1px solid var(--border);
+  background: white; padding: .45rem .95rem .45rem .55rem; font-size: .85rem; font-weight: 700; transition: .2s ease; }
+.tech-chip:hover { border-color: var(--accent); }

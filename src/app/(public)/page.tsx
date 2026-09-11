@@ -8,7 +8,8 @@ import { StructuredData } from "@/components/public/StructuredData";
 import { ResumeSection } from "@/components/public/ResumeSection";
 import { ServiceIcon } from "@/components/public/ServiceIcon";
 import { LinkedInIcon } from "@/components/public/LinkedInIcon";
-import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS, SKILL_GROUPS, STATS } from "@/lib/landing-content";
+import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS, STACK_GROUPS, STACK_PRACTICES, STATS } from "@/lib/landing-content";
+import { TechIcon } from "@/components/public/TechIcon";
 import { getProfilePhotoMeta, profilePhotoUrl } from "@/lib/media";
 import { getResumeMeta } from "@/lib/resume";
 import { pageMetadata } from "@/lib/seo";
@@ -145,9 +146,10 @@ export default async function HomePage() {
         <section className="surface border-y border-[#e1e7ec] py-9">
           <div className="container-site">
             <p className="eyebrow mb-5">Tools I build with</p>
-            <ul className="flex flex-wrap gap-3">
+            <ul className="flex flex-wrap gap-2.5">
               {technologies.map((tech) => (
-                <li key={tech.id} className="rounded-full border border-[#e1e7ec] bg-white px-4 py-2 text-sm font-bold">
+                <li key={tech.id} className="tech-chip">
+                  <span className="tech-tile h-7 w-7"><TechIcon name={tech.name} className="h-4 w-4" /></span>
                   {tech.name}
                 </li>
               ))}
@@ -187,28 +189,41 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ---------- Skills ---------- */}
-      <section className="section-space" id="skills">
+      {/* ---------- Data stack ---------- */}
+      <section className="section-space surface" id="stack">
         <div className="container-site">
-          <p className="eyebrow">Pro skills</p>
+          <p className="eyebrow">My data stack</p>
           <h2 className="h2 mt-4 max-w-3xl">
-            Let&apos;s explore <span className="accent-text">my toolkit</span>.
+            The tools I <span className="accent-text">actually build with</span>.
           </h2>
           <p className="lead mt-5 max-w-2xl">
-            Grouped by what they are actually for, rather than a wall of logos. These are the tools
-            I use day to day, not everything I have ever touched.
+            Grouped by the job they do, rather than a wall of logos. This is what I reach for day
+            to day — not everything I have ever opened.
           </p>
 
           <div className="mt-11 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {SKILL_GROUPS.map((group) => (
+            {STACK_GROUPS.map((group) => (
               <div key={group.title} className="skill-card">
                 <h3 className="text-base font-extrabold">{group.title}</h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {group.skills.map((skill) => (
-                    <li key={skill} className="skill-chip">{skill}</li>
+                <p className="muted mt-2 text-sm leading-6">{group.note}</p>
+                <ul className="mt-5 grid gap-2.5">
+                  {group.tools.map((tool) => (
+                    <li key={tool} className="flex items-center gap-3">
+                      <span className="tech-tile">
+                        <TechIcon name={tool} className="h-5 w-5" />
+                      </span>
+                      <span className="text-sm font-semibold">{tool}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
+            ))}
+          </div>
+
+          {/* Practices have no logo, so they are listed rather than tiled. */}
+          <div className="mt-8 flex flex-wrap gap-2.5">
+            {STACK_PRACTICES.map((practice) => (
+              <span key={practice} className="skill-chip">{practice}</span>
             ))}
           </div>
         </div>

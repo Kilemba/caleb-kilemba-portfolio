@@ -139,32 +139,51 @@ export const STATS: Stat[] = [
   { value: "40%", label: "Pipeline latency removed" }
 ];
 
-export type SkillGroup = { title: string; skills: string[] };
+export type StackGroup = { title: string; note: string; tools: string[] };
 
-/** Grouped from the Technical Skills section of the CV. */
-export const SKILL_GROUPS: SkillGroup[] = [
+/**
+ * The data stack, grouped by what each tool is for.
+ *
+ * Entries are tools rather than concepts, because each one renders with its brand mark —
+ * "data modelling" has no logo and would show as a monogram next to real ones. The
+ * practices that are not products are described in `note` instead.
+ *
+ * Everything here appears in the CV. Add a tool by putting its name in a group; if
+ * `simple-icons` carries the brand it is picked up automatically, otherwise it falls back
+ * to a monogram.
+ */
+export const STACK_GROUPS: StackGroup[] = [
   {
-    title: "Cloud data warehousing",
-    skills: ["Google BigQuery", "Snowflake", "PostgreSQL", "MySQL", "Data modelling"]
+    title: "Warehouses & databases",
+    note: "Designing the models and access controls, not just the storage.",
+    tools: ["Google BigQuery", "Snowflake", "PostgreSQL", "MySQL"]
   },
   {
-    title: "Pipelines & orchestration",
-    skills: ["Apache Airflow", "dbt", "Python", "ETL / ELT", "Data lineage"]
+    title: "Pipelines & transformation",
+    note: "ETL and ELT built as tested, documented, reviewable code.",
+    tools: ["Apache Airflow", "dbt", "Python", "pandas"]
   },
   {
     title: "Streaming & big data",
-    skills: ["Apache Kafka", "PySpark", "Spark SQL", "Structured Streaming", "Dataflow"]
+    note: "Batch and real-time processing where the volume justifies it.",
+    tools: ["Apache Kafka", "Apache Spark", "PySpark", "Google Cloud Platform"]
   },
   {
     title: "Analytics & BI",
-    skills: ["Looker", "Tableau", "Power BI", "Looker Studio", "Semantic modelling"]
+    note: "Semantic layers and dashboards people actually use.",
+    tools: ["Looker", "Tableau", "Power BI", "Looker Studio", "Grafana"]
   },
   {
-    title: "APIs & platform",
-    skills: ["FastAPI", "Flask", "Docker", "Kubernetes", "Terraform"]
-  },
-  {
-    title: "Governance & security",
-    skills: ["PHI / PII protection", "HIPAA controls", "Role-based access", "Column masking"]
+    title: "Platform & delivery",
+    note: "Infrastructure as code, containers and CI/CD around the data.",
+    tools: ["Docker", "Kubernetes", "Terraform", "Git", "FastAPI"]
   }
+];
+
+/** Practices that are not products, so they carry no logo. */
+export const STACK_PRACTICES = [
+  "Dimensional and semantic data modelling",
+  "PHI / PII protection and HIPAA controls",
+  "Role-based access and column-level masking",
+  "Data lineage, testing and SLA monitoring"
 ];
