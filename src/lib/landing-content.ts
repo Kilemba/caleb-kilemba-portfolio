@@ -121,3 +121,50 @@ export const SERVICE_KEYWORDS = [
   "Power BI",
   "freelance data engineer"
 ];
+
+export type Stat = { value: string; label: string };
+
+/**
+ * Headline figures for the hero band.
+ *
+ * Every one of these is taken from Caleb's CV — years of experience, daily volume
+ * processed, analytic models supported, and the measured latency improvement. Deliberately
+ * NOT the usual "happy clients / awards won" counters, which would be invented. If you
+ * want to change these, keep the rule: only numbers you could evidence if asked.
+ */
+export const STATS: Stat[] = [
+  { value: "5+", label: "Years in data engineering" },
+  { value: "500GB+", label: "Processed per day" },
+  { value: "100+", label: "Analytic models supported" },
+  { value: "40%", label: "Pipeline latency removed" }
+];
+
+export type SkillGroup = { title: string; skills: string[] };
+
+/** Grouped from the Technical Skills section of the CV. */
+export const SKILL_GROUPS: SkillGroup[] = [
+  {
+    title: "Cloud data warehousing",
+    skills: ["Google BigQuery", "Snowflake", "PostgreSQL", "MySQL", "Data modelling"]
+  },
+  {
+    title: "Pipelines & orchestration",
+    skills: ["Apache Airflow", "dbt", "Python", "ETL / ELT", "Data lineage"]
+  },
+  {
+    title: "Streaming & big data",
+    skills: ["Apache Kafka", "PySpark", "Spark SQL", "Structured Streaming", "Dataflow"]
+  },
+  {
+    title: "Analytics & BI",
+    skills: ["Looker", "Tableau", "Power BI", "Looker Studio", "Semantic modelling"]
+  },
+  {
+    title: "APIs & platform",
+    skills: ["FastAPI", "Flask", "Docker", "Kubernetes", "Terraform"]
+  },
+  {
+    title: "Governance & security",
+    skills: ["PHI / PII protection", "HIPAA controls", "Role-based access", "Column masking"]
+  }
+];

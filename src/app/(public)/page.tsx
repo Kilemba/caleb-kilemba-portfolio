@@ -8,7 +8,9 @@ import { StructuredData } from "@/components/public/StructuredData";
 import { ResumeSection } from "@/components/public/ResumeSection";
 import { ServiceIcon } from "@/components/public/ServiceIcon";
 import { LinkedInIcon } from "@/components/public/LinkedInIcon";
-import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS } from "@/lib/landing-content";
+import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS, SKILL_GROUPS, STATS } from "@/lib/landing-content";
+import { getProfilePhotoMeta, profilePhotoUrl } from "@/lib/media";
+import { getResumeMeta } from "@/lib/resume";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -32,17 +34,20 @@ function splitHeading(heading: string, accentWords = 3) {
 }
 
 export default async function HomePage() {
-  const [settings, technologies, services, projects, testimonials, posts] = await Promise.all([
+  const [settings, technologies, services, projects, testimonials, posts, photo, resume] = await Promise.all([
     getSiteSettings(),
     safeQuery("technologies", () => prisma.technology.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }], take: 12 }), []),
     safeQuery("services", () => prisma.service.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { title: "asc" }], include: { technologies: true }, take: 6 }), []),
     safeQuery("projects", () => prisma.project.findMany({ where: { published: true, featured: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], include: { technologies: true }, take: 3 }), []),
     safeQuery("testimonials", () => prisma.testimonial.findMany({ where: { published: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }], take: 3 }), []),
-    safeQuery("posts", () => prisma.blogPost.findMany({ where: { published: true }, orderBy: [{ featured: "desc" }, { publishedAt: "desc" }], take: 3 }), [])
+    safeQuery("posts", () => prisma.blogPost.findMany({ where: { published: true }, orderBy: [{ featured: "desc" }, { publishedAt: "desc" }], take: 3 }), []),
+    getProfilePhotoMeta(),
+    getResumeMeta()
   ]);
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const { lead, accent } = splitHeading(settings.heroHeading);
+  const photoSrc = photo.available ? profilePhotoUrl(photo.updatedAt) : "/images/profile-placeholder.svg";
 
   return (
     <>
@@ -56,33 +61,63 @@ export default async function HomePage() {
       <section className="hero-wrap section-space">
         <div className="blob blob-a" aria-hidden="true" />
         <div className="blob blob-b" aria-hidden="true" />
-        <div className="container-site relative grid items-center gap-14 lg:grid-cols-[1.1fr_.9fr]">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#bfe8e2] bg-white px-3.5 py-1.5 text-sm font-bold text-[#0b5f59]">
-              <span className="h-2 w-2 rounded-full bg-[#0f766e]" aria-hidden="true" />
-              Available for data engineering work
-            </p>
-            <h1 className="h1 mt-6 max-w-4xl">
-              {lead}{" "}
-              <span className="accent-text underline-sweep">{accent}</span>
-            </h1>
-            <p className="lead mt-7 max-w-2xl">{settings.homepageIntroduction}</p>
 
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/book" className="btn btn-primary">Book a free consultation</Link>
-              <Link href="/projects" className="btn btn-secondary">See my work</Link>
+        <div className="container-site relative grid items-center gap-12 lg:grid-cols-[.78fr_1.22fr]">
+          {/* Profile card. Falls back to the placeholder graphic until a photo is uploaded. */}
+          <div className="profile-card order-2 p-7 text-center lg:order-1">
+            <div className="avatar-ring mx-auto h-44 w-44">
+              <img
+                src={photoSrc}
+                alt={photo.available ? `${settings.name}, ${settings.professionalTitle}` : "Profile photo placeholder"}
+                width={176}
+                height={176}
+              />
+            </div>
+            <p className="mt-6 text-2xl font-extrabold">{settings.name}</p>
+            <p className="muted mt-2 text-sm leading-6">{settings.professionalTitle}</p>
+            {settings.location && (
+              <p className="muted mt-3 text-sm">
+                <span aria-hidden="true">📍</span> {settings.location}
+              </p>
+            )}
+            <div className="mt-6 flex justify-center gap-3">
               {settings.linkedinUrl && (
                 <a
                   href={settings.linkedinUrl}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="btn btn-secondary"
-                  aria-label={`Connect with ${settings.name} on LinkedIn`}
+                  className="social-dot"
+                  aria-label={`${settings.name} on LinkedIn (opens in a new tab)`}
                 >
                   <LinkedInIcon className="h-4 w-4" />
-                  Connect on LinkedIn
                 </a>
               )}
+              {settings.email && (
+                <a href={`mailto:${settings.email}`} className="social-dot" aria-label={`Email ${settings.name}`}>
+                  <span aria-hidden="true">✉</span>
+                </a>
+              )}
+            </div>
+            {resume.available && (
+              <a href="/resume" className="btn btn-secondary mt-6 w-full">Download CV</a>
+            )}
+          </div>
+
+          <div className="order-1 lg:order-2">
+            <p className="muted text-base font-semibold">
+              Hello there <span aria-hidden="true">👋</span>
+            </p>
+            <h1 className="h1 mt-4 max-w-3xl">
+              {lead}{" "}
+              <span className="accent-text underline-sweep">{accent}</span>
+            </h1>
+            <p className="lead mt-6 max-w-2xl">{settings.homepageIntroduction}</p>
+
+            <p className="pill-live mt-7">Available for data engineering work</p>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/book" className="btn btn-primary">Book a free consultation</Link>
+              <Link href="/projects" className="btn btn-secondary">See my work</Link>
             </div>
 
             <p className="muted mt-7 text-sm">
@@ -90,38 +125,17 @@ export default async function HomePage() {
               and digital transformation for growing businesses.
             </p>
           </div>
+        </div>
 
-          {/* Visual: what the work actually produces, rather than a stock image. */}
-          <div className="relative">
-            <div className="float-card p-6 sm:p-8">
-              <p className="eyebrow">How your data flows</p>
-              <ol className="mt-6 space-y-4">
-                {[
-                  { label: "Your systems", note: "Apps, databases, spreadsheets, APIs" },
-                  { label: "Automated pipelines", note: "Cleaned, joined and scheduled" },
-                  { label: "BigQuery warehouse", note: "One trusted source of numbers" },
-                  { label: "Dashboards and reports", note: "Answers your team can act on" }
-                ].map((stage, i, all) => (
-                  <li key={stage.label} className="relative flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <span className="step-num">{i + 1}</span>
-                      {i < all.length - 1 && <span className="mt-1 w-px flex-1 bg-[#cbd6dc]" aria-hidden="true" />}
-                    </div>
-                    <div className="pb-1">
-                      <p className="font-extrabold">{stage.label}</p>
-                      <p className="muted text-sm">{stage.note}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className="float-card absolute -bottom-5 -left-3 hidden items-center gap-3 px-4 py-3 sm:flex lg:-left-8">
-              <span className="icon-tile h-10 w-10"><ServiceIcon name="BigQuery for Business" className="h-5 w-5" /></span>
-              <div>
-                <p className="text-sm font-extrabold">BigQuery certified approach</p>
-                <p className="muted text-xs">Cost-controlled by design</p>
+        {/* Headline figures. Every one is evidenced in the CV — see STATS in landing-content. */}
+        <div className="container-site relative mt-14">
+          <div className="profile-card grid md:grid-cols-4">
+            {STATS.map((stat) => (
+              <div key={stat.label} className="stat-tile">
+                <span className="stat-value">{stat.value}</span>
+                <span className="stat-label">{stat.label}</span>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -170,6 +184,33 @@ export default async function HomePage() {
           </div>
 
           <Link href="/services" className="btn btn-secondary mt-9">View all services</Link>
+        </div>
+      </section>
+
+      {/* ---------- Skills ---------- */}
+      <section className="section-space" id="skills">
+        <div className="container-site">
+          <p className="eyebrow">Pro skills</p>
+          <h2 className="h2 mt-4 max-w-3xl">
+            Let&apos;s explore <span className="accent-text">my toolkit</span>.
+          </h2>
+          <p className="lead mt-5 max-w-2xl">
+            Grouped by what they are actually for, rather than a wall of logos. These are the tools
+            I use day to day, not everything I have ever touched.
+          </p>
+
+          <div className="mt-11 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {SKILL_GROUPS.map((group) => (
+              <div key={group.title} className="skill-card">
+                <h3 className="text-base font-extrabold">{group.title}</h3>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {group.skills.map((skill) => (
+                    <li key={skill} className="skill-chip">{skill}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -222,7 +263,7 @@ export default async function HomePage() {
                 <p className="eyebrow">Selected work</p>
                 <h2 className="h2 mt-4">Projects framed as business outcomes.</h2>
               </div>
-              <Link href="/projects" className="font-bold text-[#0f766e]">All projects →</Link>
+              <Link href="/projects" className="font-bold text-[#12875a]">All projects →</Link>
             </div>
             <div className="mt-10 grid gap-6 lg:grid-cols-3">
               {projects.map((project) => <ProjectCard key={project.id} project={project} />)}
@@ -289,7 +330,7 @@ export default async function HomePage() {
                   <span className="badge">{post.category}</span>
                   <h3 className="mt-4 text-xl font-extrabold">{post.title}</h3>
                   <p className="muted mt-3 leading-7">{post.excerpt}</p>
-                  <Link href={`/blog/${post.slug}`} className="mt-5 inline-flex font-bold text-[#0f766e]">Read article →</Link>
+                  <Link href={`/blog/${post.slug}`} className="mt-5 inline-flex font-bold text-[#12875a]">Read article →</Link>
                 </article>
               ))}
             </div>
@@ -301,7 +342,7 @@ export default async function HomePage() {
       <section className="section-space bg-[#0d1626] text-white">
         <div className="container-site grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <p className="eyebrow !text-[#7dd3ca]">Work with {settings.name}</p>
+            <p className="eyebrow !text-[#86dcb0]">Work with {settings.name}</p>
             <h2 className="h2 mt-4 max-w-3xl">Have a data problem that needs a practical solution?</h2>
             <p className="mt-5 max-w-2xl text-[#c7d2dc] leading-8">
               Book a free consultation and we will talk through your systems, the reporting you need and

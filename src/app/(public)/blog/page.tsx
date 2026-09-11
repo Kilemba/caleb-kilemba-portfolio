@@ -15,16 +15,28 @@ export default async function BlogPage() {
   const posts = await getAllPosts();
 
   return (
-    <section className="section-space">
-      <div className="container-site">
-        <p className="eyebrow">Blog</p>
-        <h1 className="h1 mt-5 max-w-5xl">Technical notes from building data systems.</h1>
-        <p className="lead mt-7 max-w-2xl">
-          Problems I have hit building pipelines and warehouses, what did not work, and what I would
-          do again.
-        </p>
+    <>
+      {/* Header sits on the same wash as the landing hero so the sections read as one site. */}
+      <section className="hero-wrap py-16 sm:py-20">
+        <div className="blob blob-a" aria-hidden="true" />
+        <div className="container-site relative">
+          <p className="eyebrow">Blog</p>
+          <h1 className="h1 mt-5 max-w-4xl">
+            Technical notes from <span className="accent-text underline-sweep">building data systems</span>.
+          </h1>
+          <p className="lead mt-7 max-w-2xl">
+            Problems I have hit building pipelines and warehouses, what did not work, and what I would
+            do again.
+          </p>
+          {posts.length > 0 && (
+            <p className="pill-live mt-7">{posts.length} article{posts.length === 1 ? "" : "s"} published</p>
+          )}
+        </div>
+      </section>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <section className="section-space">
+        <div className="container-site">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <article key={post.slug} className="card flex flex-col overflow-hidden">
               {post.cover && (
@@ -33,7 +45,7 @@ export default async function BlogPage() {
               <div className="flex flex-1 flex-col p-6">
                 <span className="badge w-fit">{post.category}</span>
                 <h2 className="mt-4 text-2xl font-extrabold">
-                  <Link href={`/blog/${post.slug}`} className="hover:text-[#0f766e]">{post.title}</Link>
+                  <Link href={`/blog/${post.slug}`} className="hover:text-[#12875a]">{post.title}</Link>
                 </h2>
                 <p className="muted mt-3 flex-1 leading-7">{post.description}</p>
                 {post.tags.length > 0 && (
@@ -48,7 +60,7 @@ export default async function BlogPage() {
                   {" · "}
                   {readingMinutes(post.body)} min read
                 </p>
-                <Link href={`/blog/${post.slug}`} className="mt-5 inline-flex font-bold text-[#0f766e]">
+                <Link href={`/blog/${post.slug}`} className="mt-5 inline-flex font-bold text-[#12875a]">
                   Read article →
                 </Link>
               </div>
@@ -67,7 +79,8 @@ export default async function BlogPage() {
             <Link href="/book" className="btn btn-primary mt-6">Book a consultation</Link>
           </div>
         )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

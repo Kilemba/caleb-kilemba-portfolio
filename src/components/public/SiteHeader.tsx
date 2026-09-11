@@ -16,14 +16,14 @@ export async function SiteHeader() {
 
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
           {nav.map(([label, href]) => (
-            <Link key={href} href={href} className="text-sm font-semibold text-[#5f6b7a] hover:text-[#0f766e]">{label}</Link>
+            <Link key={href} href={href} className="text-sm font-semibold text-[#5f6b7a] hover:text-[#12875a]">{label}</Link>
           ))}
           {settings.linkedinUrl && (
             <a
               href={settings.linkedinUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#5f6b7a] hover:text-[#0f766e]"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#5f6b7a] hover:text-[#12875a]"
               aria-label={`Connect with ${settings.name} on LinkedIn (opens in a new tab)`}
             >
               <LinkedInIcon className="h-4 w-4" />

@@ -36,7 +36,7 @@ export async function ResumeSection() {
                 "Education and certifications"
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <span aria-hidden="true" className="mt-0.5 font-bold text-[#0f766e]">✓</span>
+                  <span aria-hidden="true" className="mt-0.5 font-bold text-[#12875a]">✓</span>
                   {item}
                 </li>
               ))}

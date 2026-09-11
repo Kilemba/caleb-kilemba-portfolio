@@ -59,7 +59,7 @@ export async function ExperienceSection() {
               <ul className="muted mt-5 space-y-2.5 text-sm leading-7">
                 {role.highlights.map((highlight) => (
                   <li key={highlight} className="flex gap-3">
-                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#0f766e]" />
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#12875a]" />
                     <span>{highlight}</span>
                   </li>
                 ))}

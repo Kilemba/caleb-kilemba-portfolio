@@ -54,7 +54,7 @@ export async function Testimonials() {
                 {item.role}
                 {item.company && `, `}
                 {item.url ? (
-                  <a href={item.url} target="_blank" rel="noreferrer noopener" className="hover:text-[#0f766e]">
+                  <a href={item.url} target="_blank" rel="noreferrer noopener" className="hover:text-[#12875a]">
                     {item.company}
                   </a>
                 ) : (

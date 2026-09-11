@@ -5,8 +5,8 @@
   --surface: #f7f9fb;
   --text: #172033;
   --secondary: #5f6b7a;
-  --accent: #0f766e;
-  --accent-dark: #0b5f59;
+  --accent: #12875a;
+  --accent-dark: #0c6845;
   --border: #e1e7ec;
 }
 
@@ -30,12 +30,12 @@ button, input, textarea, select { font: inherit; }
 .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
 .btn-secondary { background: white; color: var(--text); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-.badge { display: inline-flex; padding: .35rem .65rem; border-radius: 999px; background: #e8f5f3; color: var(--accent-dark); font-size: .78rem; font-weight: 700; }
+.badge { display: inline-flex; padding: .35rem .65rem; border-radius: 999px; background: #e6f4ec; color: var(--accent-dark); font-size: .78rem; font-weight: 700; }
 .muted { color: var(--secondary); }
 .field { width: 100%; border: 1px solid var(--border); background: white; border-radius: .75rem; padding: .78rem .9rem; outline: none; }
-.field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15,118,110,.10); }
+.field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(18,135,90,.12); }
 .label { display: block; font-size: .88rem; font-weight: 700; margin-bottom: .4rem; }
-.alert-success { border: 1px solid #a7d8d3; background: #ecf9f7; color: #0b5f59; border-radius: .8rem; padding: .9rem 1rem; }
+.alert-success { border: 1px solid #a9dcc0; background: #ecf9f1; color: #0c6845; border-radius: .8rem; padding: .9rem 1rem; }
 .alert-error { border: 1px solid #f1b8b8; background: #fff5f5; color: #9b2c2c; border-radius: .8rem; padding: .9rem 1rem; }
 .prose-caleb { color: #334155; line-height: 1.85; }
 .prose-caleb h1,.prose-caleb h2,.prose-caleb h3 { color: var(--text); font-weight: 800; line-height: 1.2; margin: 1.8em 0 .7em; }
@@ -59,19 +59,19 @@ button, input, textarea, select { font: inherit; }
 /* ---------- Landing page ---------- */
 /* Brand tints derived from --accent, kept as literals so Tailwind v4 can't drop them. */
 :root {
-  --accent-soft: #e8f5f3;
-  --accent-tint: #f2faf9;
+  --accent-soft: #e6f4ec;
+  --accent-tint: #f2faf6;
   --ink-deep: #0d1626;
 }
 
-.hero-wrap { position: relative; overflow: hidden; background: linear-gradient(168deg, var(--accent-tint) 0%, #ffffff 58%); }
+.hero-wrap { position: relative; overflow: hidden; background: linear-gradient(160deg, #eef7f1 0%, #f8f8f4 42%, #ffffff 78%); }
 /* Decorative only: aria-hidden in markup, and hidden from print. */
 .blob { position: absolute; border-radius: 50%; filter: blur(46px); opacity: .5; pointer-events: none; }
-.blob-a { width: 30rem; height: 30rem; top: -9rem; right: -7rem; background: #b9e6e0; }
-.blob-b { width: 21rem; height: 21rem; bottom: -8rem; left: -6rem; background: #d8ece9; }
+.blob-a { width: 30rem; height: 30rem; top: -9rem; right: -7rem; background: #bfe6cf; }
+.blob-b { width: 21rem; height: 21rem; bottom: -8rem; left: -6rem; background: #dcefe4; }
 
 .accent-text { color: var(--accent); }
-.underline-sweep { background-image: linear-gradient(transparent 62%, #bfe8e2 62%); background-repeat: no-repeat; }
+.underline-sweep { background-image: linear-gradient(transparent 62%, #bfe6cf 62%); background-repeat: no-repeat; }
 
 .icon-tile { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: .9rem; background: var(--accent-soft); color: var(--accent-dark); flex-shrink: 0; }
 .float-card { border: 1px solid var(--border); border-radius: 1rem; background: white; box-shadow: 0 16px 44px rgba(23,32,51,.10); }
@@ -94,4 +94,36 @@ button, input, textarea, select { font: inherit; }
   html { scroll-behavior: auto; }
   .card, .faq > summary::after { transition: none; }
   .card:hover { transform: none; }
+}
+
+/* ---------- Profile, stats and skills ---------- */
+
+/* Circular portrait with a brand arc behind it. The ring is a conic gradient rather than
+   a border so it can be a partial sweep instead of a full outline. */
+.avatar-ring { position: relative; display: grid; place-items: center; border-radius: 50%; padding: 6px;
+  background: conic-gradient(from 210deg, var(--accent) 0deg, var(--accent) 118deg, #dcefe4 118deg, #dcefe4 360deg); }
+.avatar-ring > img { border-radius: 50%; display: block; width: 100%; height: 100%; object-fit: cover; background: white; }
+
+.profile-card { border: 1px solid var(--border); border-radius: 1.5rem; background: white; box-shadow: 0 20px 55px rgba(23,32,51,.08); }
+
+/* Availability pill: the dot is decorative, the text carries the meaning. */
+.pill-live { display: inline-flex; align-items: center; gap: .55rem; border-radius: 999px; border: 1px solid #bfe6cf;
+  background: white; padding: .4rem .9rem; font-size: .85rem; font-weight: 700; color: var(--accent-dark); }
+.pill-live::before { content: ""; width: .5rem; height: .5rem; border-radius: 999px; background: var(--accent); flex-shrink: 0; }
+
+.stat-tile { display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.35rem; }
+.stat-tile + .stat-tile { border-left: 1px solid var(--border); }
+.stat-label { color: var(--secondary); font-size: .85rem; font-weight: 600; line-height: 1.35; }
+
+.skill-card { border: 1px solid var(--border); border-radius: 1rem; background: white; padding: 1.25rem 1.35rem; }
+.skill-chip { display: inline-flex; border-radius: .5rem; background: var(--accent-tint); border: 1px solid #dcefe4;
+  padding: .28rem .6rem; font-size: .8rem; font-weight: 600; color: #1f3a2e; }
+
+.social-dot { display: inline-flex; align-items: center; justify-content: center; width: 2.35rem; height: 2.35rem;
+  border-radius: 50%; border: 1px solid var(--border); color: var(--secondary); transition: .2s ease; }
+.social-dot:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-tint); }
+
+/* Stat tiles sit in one row on desktop; the divider only makes sense there. */
+@media (max-width: 767px) {
+  .stat-tile + .stat-tile { border-left: 0; border-top: 1px solid var(--border); }
 }

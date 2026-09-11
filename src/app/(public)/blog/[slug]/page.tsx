@@ -56,36 +56,42 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   };
 
   return (
-    <article className="section-space">
+    <article>
       <script
         type="application/ld+json"
         // Escaping "<" stops post content from closing the script tag early.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }}
       />
 
-      <div className="container-site max-w-4xl">
-        <p className="muted text-sm">
-          <Link href="/blog" className="font-bold text-[#0f766e]">← All articles</Link>
-        </p>
+      {/* Title block on the shared wash, matching the landing hero and blog index. */}
+      <header className="hero-wrap py-14 sm:py-16">
+        <div className="blob blob-a" aria-hidden="true" />
+        <div className="container-site relative max-w-4xl">
+          <p className="muted text-sm">
+            <Link href="/blog" className="font-bold text-[#12875a]">← All articles</Link>
+          </p>
 
-        <span className="badge mt-6 inline-flex">{post.category}</span>
-        <h1 className="h1 mt-5">{post.title}</h1>
-        {post.description && <p className="lead mt-6">{post.description}</p>}
-        <p className="muted mt-4 text-sm">
-          <time dateTime={post.date.toISOString()}>{formatDate(post.date)}</time>
-          {" · "}
-          {readingMinutes(post.body)} min read
-        </p>
+          <span className="badge mt-6 inline-flex">{post.category}</span>
+          <h1 className="h1 mt-5">{post.title}</h1>
+          {post.description && <p className="lead mt-6">{post.description}</p>}
+          <p className="muted mt-5 text-sm">
+            <time dateTime={post.date.toISOString()}>{formatDate(post.date)}</time>
+            {" · "}
+            {readingMinutes(post.body)} min read
+          </p>
+        </div>
+      </header>
 
+      <div className="container-site max-w-4xl py-14">
         {post.cover && (
           <img
             src={post.cover}
             alt={`${post.title} article cover`}
-            className="mt-10 w-full rounded-2xl border border-[#e1e7ec]"
+            className="mb-10 w-full rounded-2xl border border-[#e1e7ec]"
           />
         )}
 
-        <div className="mt-10">
+        <div>
           <MarkdownContent content={post.body} />
         </div>
 

@@ -143,7 +143,7 @@ export function BookingForm({ services, initialServiceId = "" }: { services: Ser
       <div className="flex flex-wrap items-center gap-4">
         <button className="btn btn-primary w-fit" type="submit">Request Consultation</button>
         <p className="muted text-sm">
-          Prefer email? <Link href="/contact" className="font-bold text-[#0f766e]">Send a message instead</Link>.
+          Prefer email? <Link href="/contact" className="font-bold text-[#12875a]">Send a message instead</Link>.
         </p>
       </div>
     </form>

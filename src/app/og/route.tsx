@@ -24,13 +24,13 @@ export async function GET(request: Request) {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "72px",
-          background: "linear-gradient(150deg, #f2faf9 0%, #ffffff 60%)",
+          background: "linear-gradient(150deg, #f2faf6 0%, #ffffff 60%)",
           fontFamily: "sans-serif"
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#0f766e" }} />
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#0b5f59", letterSpacing: 2 }}>
+          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#12875a" }} />
+          <div style={{ fontSize: 26, fontWeight: 700, color: "#0c6845", letterSpacing: 2 }}>
             {settings.professionalTitle.toUpperCase()}
           </div>
         </div>
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div style={{ display: "flex", fontSize: 34, fontWeight: 800, color: "#0f766e" }}>{settings.name}</div>
+          <div style={{ display: "flex", fontSize: 34, fontWeight: 800, color: "#12875a" }}>{settings.name}</div>
           <div style={{ display: "flex", fontSize: 24, color: "#5f6b7a" }}>Google BigQuery · Data Pipelines</div>
         </div>
       </div>

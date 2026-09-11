@@ -18,7 +18,7 @@ export async function SiteFooter() {
               href={settings.linkedinUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#e1e7ec] px-3.5 py-2 text-sm font-bold hover:border-[#0f766e] hover:text-[#0f766e]"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#e1e7ec] px-3.5 py-2 text-sm font-bold hover:border-[#12875a] hover:text-[#12875a]"
               aria-label={`Connect with ${settings.name} on LinkedIn (opens in a new tab)`}
             >
               <LinkedInIcon className="h-4 w-4" />
@@ -31,7 +31,7 @@ export async function SiteFooter() {
           <p className="text-sm font-extrabold">Explore</p>
           <ul className="mt-3 space-y-2">
             {[["Services", "/services"], ["Projects", "/projects"], ["About", "/about"], ["Blog", "/blog"]].map(([label, href]) => (
-              <li key={href}><Link href={href} className="muted text-sm hover:text-[#0f766e]">{label}</Link></li>
+              <li key={href}><Link href={href} className="muted text-sm hover:text-[#12875a]">{label}</Link></li>
             ))}
           </ul>
         </nav>
@@ -39,14 +39,14 @@ export async function SiteFooter() {
         <nav aria-label="Footer contact links">
           <p className="text-sm font-extrabold">Work together</p>
           <ul className="mt-3 space-y-2">
-            <li><Link href="/book" className="text-sm font-semibold text-[#0f766e]">Book a consultation</Link></li>
-            <li><Link href="/contact" className="muted text-sm hover:text-[#0f766e]">Contact</Link></li>
-            <li><Link href="/#faq" className="muted text-sm hover:text-[#0f766e]">Common questions</Link></li>
+            <li><Link href="/book" className="text-sm font-semibold text-[#12875a]">Book a consultation</Link></li>
+            <li><Link href="/contact" className="muted text-sm hover:text-[#12875a]">Contact</Link></li>
+            <li><Link href="/#faq" className="muted text-sm hover:text-[#12875a]">Common questions</Link></li>
             {resume.available && (
-              <li><a href="/resume" className="muted text-sm hover:text-[#0f766e]">Download resume</a></li>
+              <li><a href="/resume" className="muted text-sm hover:text-[#12875a]">Download resume</a></li>
             )}
             {settings.email && (
-              <li><a href={`mailto:${settings.email}`} className="muted text-sm hover:text-[#0f766e]">{settings.email}</a></li>
+              <li><a href={`mailto:${settings.email}`} className="muted text-sm hover:text-[#12875a]">{settings.email}</a></li>
             )}
           </ul>
         </nav>
