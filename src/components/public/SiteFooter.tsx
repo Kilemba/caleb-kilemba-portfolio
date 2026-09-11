@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getSiteSettings } from "@/lib/settings";
 import { getResumeMeta } from "@/lib/resume";
-import { LinkedInIcon } from "@/components/public/LinkedInIcon";
+import { SocialLinks } from "@/components/public/SocialLinks";
 
 export async function SiteFooter() {
   const [settings, resume] = await Promise.all([getSiteSettings(), getResumeMeta()]);
@@ -13,18 +13,7 @@ export async function SiteFooter() {
           <p className="muted mt-2 max-w-sm text-sm leading-7">
             {settings.professionalTitle}. Building practical data systems around real business problems.
           </p>
-          {settings.linkedinUrl && (
-            <a
-              href={settings.linkedinUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#e5e7eb] px-3.5 py-2 text-sm font-bold hover:border-[#12875a] hover:text-[#12875a]"
-              aria-label={`Connect with ${settings.name} on LinkedIn (opens in a new tab)`}
-            >
-              <LinkedInIcon className="h-4 w-4" />
-              Connect on LinkedIn
-            </a>
-          )}
+          <SocialLinks settings={settings} className="mt-5 flex gap-3" />
         </div>
 
         <nav aria-label="Footer navigation">

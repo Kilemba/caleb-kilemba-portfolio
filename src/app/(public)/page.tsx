@@ -7,6 +7,7 @@ import { ProjectCard } from "@/components/public/ProjectCard";
 import { StructuredData } from "@/components/public/StructuredData";
 import { ResumeSection } from "@/components/public/ResumeSection";
 import { ServiceIcon } from "@/components/public/ServiceIcon";
+import { SocialLinks } from "@/components/public/SocialLinks";
 import { LinkedInIcon } from "@/components/public/LinkedInIcon";
 import { DIFFERENTIATORS, FAQS, PROCESS, SERVICE_KEYWORDS, STACK_GROUPS, STACK_PRACTICES, STATS } from "@/lib/landing-content";
 import { TechIcon } from "@/components/public/TechIcon";
@@ -82,24 +83,7 @@ export default async function HomePage() {
                 <span aria-hidden="true">📍</span> {settings.location}
               </p>
             )}
-            <div className="mt-6 flex justify-center gap-3">
-              {settings.linkedinUrl && (
-                <a
-                  href={settings.linkedinUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="social-dot"
-                  aria-label={`${settings.name} on LinkedIn (opens in a new tab)`}
-                >
-                  <LinkedInIcon className="h-4 w-4" />
-                </a>
-              )}
-              {settings.email && (
-                <a href={`mailto:${settings.email}`} className="social-dot" aria-label={`Email ${settings.name}`}>
-                  <span aria-hidden="true">✉</span>
-                </a>
-              )}
-            </div>
+            <SocialLinks settings={settings} className="mt-6 flex justify-center gap-3" />
             {resume.available && (
               <a href="/resume" className="btn btn-secondary mt-6 w-full">Download CV</a>
             )}
