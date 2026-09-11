@@ -2,12 +2,13 @@
 
 :root {
   --background: #ffffff;
-  --surface: #f7f9fb;
-  --text: #172033;
-  --secondary: #5f6b7a;
+  --surface: #f6f7f8;
+  --text: #0f1115;
+  --secondary: #5b6470;
   --accent: #12875a;
   --accent-dark: #0c6845;
-  --border: #e1e7ec;
+  --border: #e5e7eb;
+  --ink-deep: #0b0d10;
 }
 
 * { box-sizing: border-box; }
@@ -24,10 +25,13 @@ button, input, textarea, select { font: inherit; }
 .h2 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.05; letter-spacing: -.035em; font-weight: 800; }
 .lead { color: var(--secondary); font-size: clamp(1.05rem, 2vw, 1.25rem); line-height: 1.8; }
 .card { border: 1px solid var(--border); border-radius: 1.25rem; background: white; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-.card:hover { transform: translateY(-3px); box-shadow: 0 18px 50px rgba(23,32,51,.08); border-color: #cbd6dc; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 18px 50px rgba(23,32,51,.08); border-color: #d4d8dd; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 46px; padding: .72rem 1.05rem; border-radius: .75rem; font-weight: 700; border: 1px solid var(--border); cursor: pointer; transition: .2s ease; }
-.btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
-.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-primary { background: var(--ink-deep); color: white; border-color: var(--ink-deep); }
+.btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+/* Green call to action, for the places where black would disappear into a dark band. */
+.btn-accent { background: var(--accent); color: white; border-color: var(--accent); }
+.btn-accent:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
 .btn-secondary { background: white; color: var(--text); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 .badge { display: inline-flex; padding: .35rem .65rem; border-radius: 999px; background: #e6f4ec; color: var(--accent-dark); font-size: .78rem; font-weight: 700; }
@@ -37,13 +41,13 @@ button, input, textarea, select { font: inherit; }
 .label { display: block; font-size: .88rem; font-weight: 700; margin-bottom: .4rem; }
 .alert-success { border: 1px solid #a9dcc0; background: #ecf9f1; color: #0c6845; border-radius: .8rem; padding: .9rem 1rem; }
 .alert-error { border: 1px solid #f1b8b8; background: #fff5f5; color: #9b2c2c; border-radius: .8rem; padding: .9rem 1rem; }
-.prose-caleb { color: #334155; line-height: 1.85; }
+.prose-caleb { color: #2a2f36; line-height: 1.85; }
 .prose-caleb h1,.prose-caleb h2,.prose-caleb h3 { color: var(--text); font-weight: 800; line-height: 1.2; margin: 1.8em 0 .7em; }
 .prose-caleb h1 { font-size: 2.1rem; }.prose-caleb h2 { font-size: 1.7rem; }.prose-caleb h3 { font-size: 1.35rem; }
 .prose-caleb p,.prose-caleb ul,.prose-caleb ol,.prose-caleb pre { margin: 1em 0; }
 .prose-caleb ul,.prose-caleb ol { padding-left: 1.5rem; }.prose-caleb ul { list-style: disc; }.prose-caleb ol { list-style: decimal; }
-.prose-caleb code { background: #eef2f6; padding: .12rem .35rem; border-radius: .3rem; font-size: .92em; }
-.prose-caleb pre { background: #111827; color: #e5e7eb; padding: 1rem; border-radius: .8rem; overflow-x: auto; }
+.prose-caleb code { background: #f1f2f4; padding: .12rem .35rem; border-radius: .3rem; font-size: .92em; }
+.prose-caleb pre { background: #0b0d10; color: #e5e7eb; padding: 1rem; border-radius: .8rem; overflow-x: auto; }
 .prose-caleb pre code { background: transparent; padding: 0; color: inherit; }
 .prose-caleb a { color: var(--accent); text-decoration: underline; }
 .admin-shell { min-height: 100vh; background: #f5f7f9; }
@@ -61,14 +65,13 @@ button, input, textarea, select { font: inherit; }
 :root {
   --accent-soft: #e6f4ec;
   --accent-tint: #f2faf6;
-  --ink-deep: #0d1626;
 }
 
-.hero-wrap { position: relative; overflow: hidden; background: linear-gradient(160deg, #eef7f1 0%, #f8f8f4 42%, #ffffff 78%); }
+.hero-wrap { position: relative; overflow: hidden; background: linear-gradient(160deg, #f3f6f4 0%, #fafafa 46%, #ffffff 80%); }
 /* Decorative only: aria-hidden in markup, and hidden from print. */
-.blob { position: absolute; border-radius: 50%; filter: blur(46px); opacity: .5; pointer-events: none; }
-.blob-a { width: 30rem; height: 30rem; top: -9rem; right: -7rem; background: #bfe6cf; }
-.blob-b { width: 21rem; height: 21rem; bottom: -8rem; left: -6rem; background: #dcefe4; }
+.blob { position: absolute; border-radius: 50%; filter: blur(52px); opacity: .34; pointer-events: none; }
+.blob-a { width: 30rem; height: 30rem; top: -9rem; right: -7rem; background: #c6e3d2; }
+.blob-b { width: 21rem; height: 21rem; bottom: -8rem; left: -6rem; background: #e3e7e5; }
 
 .accent-text { color: var(--accent); }
 .underline-sweep { background-image: linear-gradient(transparent 62%, #bfe6cf 62%); background-repeat: no-repeat; }
@@ -76,8 +79,8 @@ button, input, textarea, select { font: inherit; }
 .icon-tile { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: .9rem; background: var(--accent-soft); color: var(--accent-dark); flex-shrink: 0; }
 .float-card { border: 1px solid var(--border); border-radius: 1rem; background: white; box-shadow: 0 16px 44px rgba(23,32,51,.10); }
 
-.stat-value { font-size: clamp(1.9rem, 3.5vw, 2.75rem); font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--accent); }
-.step-num { display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; border-radius: 999px; background: var(--accent); color: white; font-weight: 800; font-size: .95rem; flex-shrink: 0; }
+.stat-value { font-size: clamp(1.9rem, 3.5vw, 2.75rem); font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--ink-deep); }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; border-radius: 999px; background: var(--ink-deep); color: white; font-weight: 800; font-size: .95rem; flex-shrink: 0; }
 
 /* FAQ uses native <details> so it works without JavaScript. */
 .faq { border: 1px solid var(--border); border-radius: 1rem; background: white; overflow: hidden; }
@@ -101,7 +104,7 @@ button, input, textarea, select { font: inherit; }
 /* Circular portrait with a brand arc behind it. The ring is a conic gradient rather than
    a border so it can be a partial sweep instead of a full outline. */
 .avatar-ring { position: relative; display: grid; place-items: center; border-radius: 50%; padding: 6px;
-  background: conic-gradient(from 210deg, var(--accent) 0deg, var(--accent) 118deg, #dcefe4 118deg, #dcefe4 360deg); }
+  background: conic-gradient(from 208deg, var(--ink-deep) 0deg, var(--ink-deep) 82deg, var(--accent) 82deg, var(--accent) 140deg, #e8eae9 140deg, #e8eae9 360deg); }
 .avatar-ring > img { border-radius: 50%; display: block; width: 100%; height: 100%; object-fit: cover; background: white; }
 
 .profile-card { border: 1px solid var(--border); border-radius: 1.5rem; background: white; box-shadow: 0 20px 55px rgba(23,32,51,.08); }
@@ -117,7 +120,7 @@ button, input, textarea, select { font: inherit; }
 
 .skill-card { border: 1px solid var(--border); border-radius: 1rem; background: white; padding: 1.25rem 1.35rem; }
 .skill-chip { display: inline-flex; border-radius: .5rem; background: var(--accent-tint); border: 1px solid #dcefe4;
-  padding: .28rem .6rem; font-size: .8rem; font-weight: 600; color: #1f3a2e; }
+  padding: .28rem .6rem; font-size: .8rem; font-weight: 600; color: #0f1115; }
 
 .social-dot { display: inline-flex; align-items: center; justify-content: center; width: 2.35rem; height: 2.35rem;
   border-radius: 50%; border: 1px solid var(--border); color: var(--secondary); transition: .2s ease; }
@@ -134,3 +137,8 @@ button, input, textarea, select { font: inherit; }
 .tech-chip { display: inline-flex; align-items: center; gap: .55rem; border-radius: 999px; border: 1px solid var(--border);
   background: white; padding: .45rem .95rem .45rem .55rem; font-size: .85rem; font-weight: 700; transition: .2s ease; }
 .tech-chip:hover { border-color: var(--accent); }
+
+/* One tool with its brand mark. Used anywhere the stack is listed. */
+.tech-badge { display: inline-flex; align-items: center; gap: .45rem; border-radius: 999px; border: 1px solid var(--border);
+  background: white; padding: .32rem .72rem .32rem .5rem; font-size: .8rem; font-weight: 700; color: var(--text); }
+.tech-badge-sm { font-size: .72rem; padding: .22rem .55rem .22rem .38rem; gap: .35rem; }

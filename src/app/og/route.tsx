@@ -35,13 +35,13 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        <div style={{ display: "flex", fontSize: 62, fontWeight: 800, color: "#172033", lineHeight: 1.15 }}>
+        <div style={{ display: "flex", fontSize: 62, fontWeight: 800, color: "#0f1115", lineHeight: 1.15 }}>
           {title}
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div style={{ display: "flex", fontSize: 34, fontWeight: 800, color: "#12875a" }}>{settings.name}</div>
-          <div style={{ display: "flex", fontSize: 24, color: "#5f6b7a" }}>Google BigQuery · Data Pipelines</div>
+          <div style={{ display: "flex", fontSize: 24, color: "#5b6470" }}>Google BigQuery · Data Pipelines</div>
         </div>
       </div>
     ),

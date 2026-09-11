@@ -13,6 +13,7 @@ import { TechIcon } from "@/components/public/TechIcon";
 import { getProfilePhotoMeta, profilePhotoUrl } from "@/lib/media";
 import { getResumeMeta } from "@/lib/resume";
 import { pageMetadata } from "@/lib/seo";
+import { TechBadge } from "@/components/public/TechBadge";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -122,7 +123,7 @@ export default async function HomePage() {
             </div>
 
             <p className="muted mt-7 text-sm">
-              Specialising in <strong className="text-[#172033]">Google BigQuery</strong>, cloud data warehousing
+              Specialising in <strong className="text-[#0f1115]">Google BigQuery</strong>, cloud data warehousing
               and digital transformation for growing businesses.
             </p>
           </div>
@@ -143,7 +144,7 @@ export default async function HomePage() {
 
       {/* ---------- Technologies ---------- */}
       {technologies.length > 0 && (
-        <section className="surface border-y border-[#e1e7ec] py-9">
+        <section className="surface border-y border-[#e5e7eb] py-9">
           <div className="container-site">
             <p className="eyebrow mb-5">Tools I build with</p>
             <ul className="flex flex-wrap gap-2.5">
@@ -178,7 +179,7 @@ export default async function HomePage() {
                 <p className="muted mt-3 flex-1 leading-7">{service.description}</p>
                 {service.technologies.length > 0 && (
                   <ul className="mt-5 flex flex-wrap gap-2">
-                    {service.technologies.map((t) => <li key={t.id} className="badge">{t.name}</li>)}
+                    {service.technologies.map((t) => <li key={t.id}><TechBadge name={t.name} /></li>)}
                   </ul>
                 )}
               </article>
@@ -354,7 +355,7 @@ export default async function HomePage() {
       )}
 
       {/* ---------- Closing CTA ---------- */}
-      <section className="section-space bg-[#0d1626] text-white">
+      <section className="section-space bg-[#0b0d10] text-white">
         <div className="container-site grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="eyebrow !text-[#86dcb0]">Work with {settings.name}</p>
@@ -365,7 +366,7 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="/book" className="btn bg-white text-[#0d1626]">Book a consultation</Link>
+            <Link href="/book" className="btn btn-accent">Book a consultation</Link>
             {settings.linkedinUrl && (
               <a
                 href={settings.linkedinUrl}

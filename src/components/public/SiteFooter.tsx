@@ -6,7 +6,7 @@ import { LinkedInIcon } from "@/components/public/LinkedInIcon";
 export async function SiteFooter() {
   const [settings, resume] = await Promise.all([getSiteSettings(), getResumeMeta()]);
   return (
-    <footer className="border-t border-[#e1e7ec] py-12">
+    <footer className="border-t border-[#e5e7eb] py-12">
       <div className="container-site grid gap-8 md:grid-cols-[1.2fr_1fr_1fr]">
         <div>
           <p className="font-extrabold">{settings.name}</p>
@@ -18,7 +18,7 @@ export async function SiteFooter() {
               href={settings.linkedinUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#e1e7ec] px-3.5 py-2 text-sm font-bold hover:border-[#12875a] hover:text-[#12875a]"
+              className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[#e5e7eb] px-3.5 py-2 text-sm font-bold hover:border-[#12875a] hover:text-[#12875a]"
               aria-label={`Connect with ${settings.name} on LinkedIn (opens in a new tab)`}
             >
               <LinkedInIcon className="h-4 w-4" />
@@ -52,7 +52,7 @@ export async function SiteFooter() {
         </nav>
       </div>
 
-      <div className="container-site mt-9 border-t border-[#e1e7ec] pt-6 text-xs muted">
+      <div className="container-site mt-9 border-t border-[#e5e7eb] pt-6 text-xs muted">
         © {new Date().getFullYear()} {settings.name}. All rights reserved.
       </div>
     </footer>

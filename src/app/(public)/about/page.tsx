@@ -35,7 +35,7 @@ export default async function AboutPage() {
               alt={usingPlaceholder ? "Profile photo placeholder" : `${settings.name}, ${settings.professionalTitle}`}
               width={480}
               height={560}
-              className="w-full rounded-2xl border border-[#e1e7ec] object-cover"
+              className="w-full rounded-2xl border border-[#e5e7eb] object-cover"
             />
             {usingPlaceholder && (
               <p className="muted mt-3 text-xs">

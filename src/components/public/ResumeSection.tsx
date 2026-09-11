@@ -43,7 +43,7 @@ export async function ResumeSection() {
             </ul>
           </div>
 
-          <div className="rounded-2xl bg-[#f7f9fb] p-6 text-center">
+          <div className="rounded-2xl bg-[#f6f7f8] p-6 text-center">
             <p className="font-extrabold">{settings.name}</p>
             <p className="muted mt-1 text-sm">{settings.professionalTitle}</p>
             {(sizeLabel || updatedLabel) && (

@@ -87,7 +87,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <img
             src={post.cover}
             alt={`${post.title} article cover`}
-            className="mb-10 w-full rounded-2xl border border-[#e1e7ec]"
+            className="mb-10 w-full rounded-2xl border border-[#e5e7eb]"
           />
         )}
 
