@@ -68,7 +68,7 @@ export default async function HomePage() {
         <div className="container-site relative grid items-center gap-12 lg:grid-cols-[.78fr_1.22fr]">
           {/* Profile card. Falls back to the placeholder graphic until a photo is uploaded. */}
           <div className="profile-card order-2 p-7 text-center lg:order-1">
-            <div className="avatar-ring mx-auto h-44 w-44">
+            <div className="avatar-ring mx-auto">
               <img
                 src={photoSrc}
                 alt={photo.available ? `${settings.name}, ${settings.professionalTitle}` : "Profile photo placeholder"}

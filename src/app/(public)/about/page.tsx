@@ -34,8 +34,10 @@ export default async function AboutPage() {
               src={photoSrc}
               alt={usingPlaceholder ? "Profile photo placeholder" : `${settings.name}, ${settings.professionalTitle}`}
               width={480}
-              height={560}
-              className="w-full rounded-2xl border border-[#e5e7eb] object-cover"
+              height={600}
+              /* Fixed 4:5 box so the reserved space matches what renders and the portrait is
+                 cropped rather than dictating the height. */
+              className="aspect-[4/5] w-full rounded-2xl border border-[#e5e7eb] object-cover object-top"
             />
             {usingPlaceholder && (
               <p className="muted mt-3 text-xs">
