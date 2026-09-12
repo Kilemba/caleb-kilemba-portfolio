@@ -12,7 +12,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#e5e7eb] bg-white/95 backdrop-blur">
       <div className="container-site flex min-h-18 items-center justify-between gap-5">
-        <Link href="/" className="text-lg font-bold tracking-tight">{settings.name}</Link>
+        <Link href="/" className="text-xl font-bold tracking-tight sm:text-[1.45rem]">{settings.name}</Link>
 
         <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
           {nav.map(([label, href]) => (
