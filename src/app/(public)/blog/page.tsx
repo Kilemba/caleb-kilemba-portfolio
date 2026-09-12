@@ -44,7 +44,7 @@ export default async function BlogPage() {
               )}
               <div className="flex flex-1 flex-col p-6">
                 <span className="badge w-fit">{post.category}</span>
-                <h2 className="mt-4 text-2xl font-extrabold">
+                <h2 className="mt-4 text-2xl font-bold">
                   <Link href={`/blog/${post.slug}`} className="hover:text-[#12875a]">{post.title}</Link>
                 </h2>
                 <p className="muted mt-3 flex-1 leading-7">{post.description}</p>
@@ -70,7 +70,7 @@ export default async function BlogPage() {
 
         {posts.length === 0 && (
           <div className="card mt-12 max-w-2xl p-8">
-            <h2 className="text-xl font-extrabold">No articles published yet</h2>
+            <h2 className="text-xl font-bold">No articles published yet</h2>
             <p className="muted mt-3 leading-7">
               Posts are markdown files in <code>content/blog</code>. Copy{" "}
               <code>example-post-template.md</code>, write the post, set <code>draft: false</code> and

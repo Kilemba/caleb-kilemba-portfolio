@@ -9,7 +9,7 @@ export async function SiteFooter() {
     <footer className="border-t border-[#e5e7eb] py-12">
       <div className="container-site grid gap-8 md:grid-cols-[1.2fr_1fr_1fr]">
         <div>
-          <p className="font-extrabold">{settings.name}</p>
+          <p className="font-bold">{settings.name}</p>
           <p className="muted mt-2 max-w-sm text-sm leading-7">
             {settings.professionalTitle}. Building practical data systems around real business problems.
           </p>
@@ -17,7 +17,7 @@ export async function SiteFooter() {
         </div>
 
         <nav aria-label="Footer navigation">
-          <p className="text-sm font-extrabold">Explore</p>
+          <p className="text-sm font-bold">Explore</p>
           <ul className="mt-3 space-y-2">
             {[["Services", "/services"], ["Projects", "/projects"], ["About", "/about"], ["Blog", "/blog"]].map(([label, href]) => (
               <li key={href}><Link href={href} className="muted text-sm hover:text-[#12875a]">{label}</Link></li>
@@ -26,7 +26,7 @@ export async function SiteFooter() {
         </nav>
 
         <nav aria-label="Footer contact links">
-          <p className="text-sm font-extrabold">Work together</p>
+          <p className="text-sm font-bold">Work together</p>
           <ul className="mt-3 space-y-2">
             <li><Link href="/book" className="text-sm font-semibold text-[#12875a]">Book a consultation</Link></li>
             <li><Link href="/contact" className="muted text-sm hover:text-[#12875a]">Contact</Link></li>

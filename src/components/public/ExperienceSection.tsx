@@ -36,7 +36,7 @@ export async function ExperienceSection() {
           <li key={role.id} className="card p-6 sm:p-8">
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
               <div>
-                <h3 className="text-xl font-extrabold">{role.role}</h3>
+                <h3 className="text-xl font-bold">{role.role}</h3>
                 <p className="muted mt-1 font-semibold">
                   {role.company}
                   {role.location && ` · ${role.location}`}

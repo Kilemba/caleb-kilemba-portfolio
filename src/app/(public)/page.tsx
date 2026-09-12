@@ -76,7 +76,7 @@ export default async function HomePage() {
                 height={176}
               />
             </div>
-            <p className="mt-6 text-2xl font-extrabold">{settings.name}</p>
+            <p className="mt-6 text-2xl font-bold">{settings.name}</p>
             <p className="muted mt-2 text-sm leading-6">{settings.professionalTitle}</p>
             {settings.location && (
               <p className="muted mt-3 text-sm">
@@ -159,7 +159,7 @@ export default async function HomePage() {
             {services.map((service) => (
               <article key={service.id} className="card flex flex-col p-7" id={service.slug}>
                 <span className="icon-tile"><ServiceIcon name={service.title} className="h-6 w-6" /></span>
-                <h3 className="mt-5 text-xl font-extrabold">{service.title}</h3>
+                <h3 className="mt-5 text-xl font-bold">{service.title}</h3>
                 <p className="muted mt-3 flex-1 leading-7">{service.description}</p>
                 {service.technologies.length > 0 && (
                   <ul className="mt-5 flex flex-wrap gap-2">
@@ -189,7 +189,7 @@ export default async function HomePage() {
           <div className="mt-11 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {STACK_GROUPS.map((group) => (
               <div key={group.title} className="skill-card">
-                <h3 className="text-base font-extrabold">{group.title}</h3>
+                <h3 className="text-base font-bold">{group.title}</h3>
                 <p className="muted mt-2 text-sm leading-6">{group.note}</p>
                 <ul className="mt-5 grid gap-2.5">
                   {group.tools.map((tool) => (
@@ -229,7 +229,7 @@ export default async function HomePage() {
           <ul className="grid gap-5 sm:grid-cols-2">
             {DIFFERENTIATORS.map((item) => (
               <li key={item.title} className="card p-6">
-                <h3 className="text-lg font-extrabold">{item.title}</h3>
+                <h3 className="text-lg font-bold">{item.title}</h3>
                 <p className="muted mt-3 leading-7">{item.detail}</p>
               </li>
             ))}
@@ -246,7 +246,7 @@ export default async function HomePage() {
             {PROCESS.map((step, i) => (
               <li key={step.title} className="card p-6">
                 <span className="step-num">{i + 1}</span>
-                <h3 className="mt-4 text-lg font-extrabold">{step.title}</h3>
+                <h3 className="mt-4 text-lg font-bold">{step.title}</h3>
                 <p className="muted mt-3 leading-7">{step.detail}</p>
               </li>
             ))}
@@ -328,7 +328,7 @@ export default async function HomePage() {
               {posts.map((post) => (
                 <article key={post.id} className="card p-6">
                   <span className="badge">{post.category}</span>
-                  <h3 className="mt-4 text-xl font-extrabold">{post.title}</h3>
+                  <h3 className="mt-4 text-xl font-bold">{post.title}</h3>
                   <p className="muted mt-3 leading-7">{post.excerpt}</p>
                   <Link href={`/blog/${post.slug}`} className="mt-5 inline-flex font-bold text-[#12875a]">Read article →</Link>
                 </article>
