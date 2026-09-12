@@ -193,3 +193,31 @@ button, input, textarea, select { font: inherit; }
 .status-pill { border-radius: 999px; padding: .3rem .75rem; font-size: .78rem; font-weight: 700; }
 .meter { height: .5rem; border-radius: 999px; background: var(--surface); overflow: hidden; }
 .meter > span { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+
+/* ---------- Project card visuals ---------- */
+.project-visual { position: relative; height: 11rem; overflow: hidden;
+  background: linear-gradient(150deg, #eef6f1 0%, #f8faf9 55%, #ffffff 100%); }
+.project-visual > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Hover animates the marks. Transition targets are set per shape so each variant moves
+   in a way that suits it: bars grow, the trend line draws, pipeline nodes settle. */
+.viz-bar { transform-origin: 50% 78px; transform: scaleY(.82); transition: transform .5s cubic-bezier(.22,1,.36,1), opacity .4s ease; }
+.card:hover .viz-bar { transform: scaleY(1); }
+
+.viz-line { stroke-dasharray: 260; stroke-dashoffset: 60; transition: stroke-dashoffset .8s cubic-bezier(.22,1,.36,1); }
+.card:hover .viz-line { stroke-dashoffset: 0; }
+.viz-dot { transform: scale(.5); transform-origin: center; transform-box: fill-box; transition: transform .45s cubic-bezier(.34,1.56,.64,1); }
+.card:hover .viz-dot { transform: scale(1); }
+
+.viz-node { transform: translateY(4px); transition: transform .45s cubic-bezier(.22,1,.36,1); }
+.card:hover .viz-node { transform: translateY(0); }
+.viz-link { stroke-dasharray: 90; stroke-dashoffset: 30; transition: stroke-dashoffset .6s ease; }
+.card:hover .viz-link { stroke-dashoffset: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .viz-bar, .viz-line, .viz-dot, .viz-node, .viz-link { transition: none; }
+  .viz-bar { transform: scaleY(1); }
+  .viz-line, .viz-link { stroke-dashoffset: 0; }
+  .viz-dot { transform: scale(1); }
+  .viz-node { transform: translateY(0); }
+}

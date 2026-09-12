@@ -76,7 +76,7 @@ export default async function HomePage() {
                 height={176}
               />
             </div>
-            <p className="mt-6 text-2xl font-bold">{settings.name}</p>
+            <p className="mt-6 text-3xl font-bold tracking-tight sm:text-[2rem]">{settings.name}</p>
             <p className="muted mt-2 text-sm leading-6">{settings.professionalTitle}</p>
             {settings.location && (
               <p className="muted mt-3 text-sm">
